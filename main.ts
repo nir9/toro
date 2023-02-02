@@ -20,6 +20,8 @@ function setup() {
     let jumpingCounter = 1;
     let standingCounter = 1;
 
+    
+
     setInterval(() => {
         runningCounter++;
         if (runningCounter > 8) {
@@ -52,9 +54,11 @@ function setup() {
         ctx.scale(0.5, 0.5);
         ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x, 200 + y, 4096, 1714);
         ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x + 4096, 200 + y, 4096, 1714);
+       
         ctx.scale(2, 2);
         ctx.scale(0.1, 0.1);
         
+        //player
         if (moveRight || moveLeft) {
             ctx.drawImage(<CanvasImageSource>document.getElementById("running" + runningCounter), 5000, 6000);
         } else {
@@ -64,7 +68,17 @@ function setup() {
                 ctx.drawImage(<CanvasImageSource>document.getElementById("standing" + standingCounter), 5000, 6000);
             }
         }
+
+      
+
         ctx.scale(10, 10);
+        
+
+        //termite    
+        termiteDraw(ctx,x,y)
+       
+        
+        //ctx.restore();
     }
 
     window.addEventListener("keydown", (ev) => {
@@ -91,11 +105,75 @@ function setup() {
             x -= 150;
         }
 
+        //termite        
+        termiteUpdatePos(x,y)
+
         update();
         requestAnimationFrame(updatePos);
     }
 
     requestAnimationFrame(updatePos);
 }
+
+
+function randomIntFromInterval(min:any, max:any) { // min and max included 
+    return Math.floor(Math.random() * (max - min + 1) + min)
+  }
+
+/////////// termits
+const speed = 8
+
+class Termite{
+    x: any
+    y: any
+
+    constructor(x:any,y:any){
+        this.x = x
+        this.y = y
+    }
+
+    public draw(ctx: any,screenX:number,screenY:number): void {
+        ctx.drawImage(<CanvasImageSource>document.getElementById("termite") ,screenX+this.x, this.y)         
+    }
+
+    public UpdatePos(screenX:number,screenY:number): void{
+        this.x -= 8
+    }
+    
+}
+
+let termites:Termite[] = []
+
+//up 1500 down 1700
+spawn(5000,1600,100,10)
+
+function spawn(x:any,y:any,radius:any,many:any){
+    
+    for (var _i = 0; _i < many; _i++) {
+        const spawnX = randomIntFromInterval(x-radius,x+radius)
+        const spawny = randomIntFromInterval(y-radius,y+radius)
+        termites.push(new Termite(spawnX,spawny))
+    }
+}
+    
+
+function termiteDraw(ctx: any,x:any,y:any) {
+    ctx.scale(0.5, 0.5);
+    
+    for (let i in termites) {
+        termites[i].draw(ctx,x,y)
+    }
+    
+
+    ctx.scale(2, 2);
+}
+
+function termiteUpdatePos(x: any,y:any) {
+    for (let i in termites) {
+        termites[i].UpdatePos(x,y)
+    }    
+}
+
+
 
 setup();
