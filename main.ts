@@ -1,22 +1,21 @@
 function setup() {
     let canvas = <HTMLCanvasElement>document.getElementById("game");
-    canvas.height = window.innerHeight - 100;
-    canvas.width = window.innerWidth - 100;
+
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
 
     var ctx = canvas.getContext("2d");
     let moveRight = false;
     let moveLeft = false;
-    let moveUp = false;
-    let moveDown = false;
     let space = false;
 
     if (ctx === null) {
         return;
     }
 
-    ctx.fillStyle ="#FF00FF";
+    ctx.fillStyle ="#666";
     let x = 1;
-    let y = 1;
+    let y = 0;
     let runningCounter = 1;
     let jumpingCounter = 1;
     let standingCounter = 1;
@@ -49,28 +48,28 @@ function setup() {
         }
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        // ctx.fillRect(50 + x, 50, 100, 100);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("bg"), 0, 0, 1920, 1080);
-        ctx.scale(0.25, 0.25);
-        if (moveRight || moveLeft || moveUp || moveDown) {
-
-            ctx.drawImage(<CanvasImageSource>document.getElementById("running" + runningCounter), 100 + x, 100 + y);
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.scale(0.5, 0.5);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x, 200 + y, 4096, 1714);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x + 4096, 200 + y, 4096, 1714);
+        ctx.scale(2, 2);
+        ctx.scale(0.1, 0.1);
+        
+        if (moveRight || moveLeft) {
+            ctx.drawImage(<CanvasImageSource>document.getElementById("running" + runningCounter), 5000, 6000);
         } else {
             if (space) {
-                ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), 100 + x, 100 + y - (runningCounter * 100));
+                ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), 5000, 6000 - (runningCounter * 100));
             } else {
-
-                ctx.drawImage(<CanvasImageSource>document.getElementById("standing" + standingCounter), 100 + x, 100 + y);
+                ctx.drawImage(<CanvasImageSource>document.getElementById("standing" + standingCounter), 5000, 6000);
             }
         }
-        ctx.scale(4, 4);
+        ctx.scale(10, 10);
     }
 
     window.addEventListener("keydown", (ev) => {
         moveRight = ev.code === "ArrowRight";
         moveLeft = ev.code === "ArrowLeft"
-        moveUp = ev.code === "ArrowUp"
-        moveDown = ev.code === "ArrowDown"
         space = ev.code === "Space";
 
         if (space) {
@@ -81,22 +80,15 @@ function setup() {
     window.addEventListener("keyup", () => {
         moveRight = false;
         moveLeft = false;
-        moveUp = false;
-        moveDown = false;
     });
 
     function updatePos() {
         if (moveRight) {
-            x += 30;
+            x += 150;
         }
+
         if (moveLeft) {
-            x -= 30;
-        }
-        if (moveUp) {
-            y -= 30;
-        }
-        if (moveDown) {
-            y += 30;
+            x -= 150;
         }
 
         update();
@@ -104,9 +96,6 @@ function setup() {
     }
 
     requestAnimationFrame(updatePos);
-
-    ctx.fillRect(50, 50, 100, 100);
-
 }
 
 setup();
