@@ -1,8 +1,13 @@
 function setup() {
     let canvas = <HTMLCanvasElement>document.getElementById("game");
+        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
 
-    canvas.height = window.innerHeight;
-    canvas.width = window.innerWidth;
+    window.addEventListener("resize", () => {
+        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
+    });
+
 
     var ctx = canvas.getContext("2d");
     let moveRight = false;
@@ -42,7 +47,7 @@ function setup() {
         if (standingCounter > 4) {
             standingCounter = 1;
         }
-    }, 120);
+    }, 200);
 
     function update() {
         if (ctx === null) {
@@ -82,9 +87,9 @@ function setup() {
     }
 
     window.addEventListener("keydown", (ev) => {
-        moveRight = ev.code === "ArrowRight";
-        moveLeft = ev.code === "ArrowLeft"
-        space = ev.code === "Space";
+        moveRight = ev.code === "ArrowRight" || ev.code === "KeyD";
+        moveLeft = ev.code === "ArrowLeft" || ev.code === "KeyA";
+        space = ev.code === "Space" || ev.code === "ArrowUp" || ev.code === "KeyW";
 
         if (space) {
             jumpingCounter = 1;
@@ -98,11 +103,11 @@ function setup() {
 
     function updatePos() {
         if (moveRight) {
-            x += 150;
+            x -= 40;
         }
 
         if (moveLeft) {
-            x -= 150;
+            x += 40;
         }
 
         //termite        
