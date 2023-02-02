@@ -72,17 +72,17 @@ function setup() {
             xMove -= 1500;
         }
         
-        //player
-        if (moveRight || moveLeft) {
+        if (space) {
+            ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), xMove, 6000 - (jumpingCounter * 300));
+        }
+        else if (moveRight || moveLeft) {
 
             ctx.drawImage(<CanvasImageSource>document.getElementById("running" + runningCounter), xMove, 6000);
 
-        } else {
-            if (space) {
-                ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), xMove, 6000 - (runningCounter * 100));
-            } else {
-                ctx.drawImage(<CanvasImageSource>document.getElementById("standing" + standingCounter), xMove, 6000);
-            }
+        }
+       
+        else {
+            ctx.drawImage(<CanvasImageSource>document.getElementById("standing" + standingCounter), xMove, 6000);
         }
 
         if (!isFacingRight) {
@@ -100,23 +100,30 @@ function setup() {
     }
 
     window.addEventListener("keydown", (ev) => {
-        moveRight = ev.code === "ArrowRight" || ev.code === "KeyD";
-        moveLeft = ev.code === "ArrowLeft" || ev.code === "KeyA";
-
-        if (moveRight || moveLeft) {
-            isFacingRight = moveRight;
-        }
-
         space = ev.code === "Space" || ev.code === "ArrowUp" || ev.code === "KeyW";
+
+        if (!space) {
+            moveRight = ev.code === "ArrowRight" || ev.code === "KeyD";
+            moveLeft = ev.code === "ArrowLeft" || ev.code === "KeyA";
+
+            if (moveRight || moveLeft) {
+                isFacingRight = moveRight;
+            }
+        }
 
         if (space) {
             jumpingCounter = 1;
         }
     });
 
-    window.addEventListener("keyup", () => {
-        moveRight = false;
-        moveLeft = false;
+    window.addEventListener("keyup", (ev) => {
+        if (ev.code === "ArrowRight") {
+            moveRight = false;
+        }
+
+        if (ev.code === "ArrowLeft") {
+            moveLeft = false;
+        }
     });
 
     function updatePos() {
