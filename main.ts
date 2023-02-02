@@ -10,6 +10,7 @@ function setup() {
 
 
     var ctx = canvas.getContext("2d");
+    let isFacingRight = true;
     let moveRight = false;
     let moveLeft = false;
     let space = false;
@@ -62,30 +63,31 @@ function setup() {
        
         ctx.scale(2, 2);
         ctx.scale(0.1, 0.1);
+
+        let xMove = 5000;
+
+        if (!isFacingRight) {
+            ctx.scale(-1, 1);
+            xMove *= -1;
+            xMove -= 1500;
+        }
         
         //player
         if (moveRight || moveLeft) {
-            let xMove = 5000;
-
-            if (moveLeft) {
-                ctx.scale(-1, 1);
-                xMove *= -1;
-            }
 
             ctx.drawImage(<CanvasImageSource>document.getElementById("running" + runningCounter), xMove, 6000);
 
-            if (moveLeft) {
-                ctx.scale(-1, 1);
-            }
         } else {
             if (space) {
-                ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), 5000, 6000 - (runningCounter * 100));
+                ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), xMove, 6000 - (runningCounter * 100));
             } else {
-                ctx.drawImage(<CanvasImageSource>document.getElementById("standing" + standingCounter), 5000, 6000);
+                ctx.drawImage(<CanvasImageSource>document.getElementById("standing" + standingCounter), xMove, 6000);
             }
         }
 
-      
+        if (!isFacingRight) {
+            ctx.scale(-1, 1);
+        }
 
         ctx.scale(10, 10);
         
@@ -100,6 +102,11 @@ function setup() {
     window.addEventListener("keydown", (ev) => {
         moveRight = ev.code === "ArrowRight" || ev.code === "KeyD";
         moveLeft = ev.code === "ArrowLeft" || ev.code === "KeyA";
+
+        if (moveRight || moveLeft) {
+            isFacingRight = moveRight;
+        }
+
         space = ev.code === "Space" || ev.code === "ArrowUp" || ev.code === "KeyW";
 
         if (space) {
