@@ -15,7 +15,7 @@ function setup() {
 
     ctx.fillStyle ="#666";
     let x = 1;
-    let y = (canvas.height - 300) * 10;
+    let y = 0;
     let runningCounter = 1;
     let jumpingCounter = 1;
     let standingCounter = 1;
@@ -48,18 +48,20 @@ function setup() {
         }
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        // ctx.drawImage(<CanvasImageSource>document.getElementById("bg"), 0, 0, 1920, 1080);
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.scale(0.5, 0.5);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x, 200 + y, 4096, 1714);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x + 4096, 200 + y, 4096, 1714);
+        ctx.scale(2, 2);
         ctx.scale(0.1, 0.1);
         
         if (moveRight || moveLeft) {
-            ctx.drawImage(<CanvasImageSource>document.getElementById("running" + runningCounter), 100 + x, 100 + y);
+            ctx.drawImage(<CanvasImageSource>document.getElementById("running" + runningCounter), 5000, 6000);
         } else {
             if (space) {
-                ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), 100 + x, 100 + y - (runningCounter * 100));
+                ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), 5000, 6000 - (runningCounter * 100));
             } else {
-
-                ctx.drawImage(<CanvasImageSource>document.getElementById("standing" + standingCounter), 100 + x, 100 + y);
+                ctx.drawImage(<CanvasImageSource>document.getElementById("standing" + standingCounter), 5000, 6000);
             }
         }
         ctx.scale(10, 10);
