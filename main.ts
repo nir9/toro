@@ -152,6 +152,7 @@ function randomIntFromInterval(min:any, max:any) { // min and max included
 
 /////////// termits
 const speed = 8
+const playerX = 1190
 
 class Termite{
     x: any
@@ -167,7 +168,11 @@ class Termite{
     }
 
     public UpdatePos(screenX:number,screenY:number): void{
-        this.x -= 8
+        if(this.x > playerX)
+            this.x -= randomIntFromInterval(speed-2,speed+2)
+
+        this.y += randomIntFromInterval(-1,1)
+        
     }
     
 }
