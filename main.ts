@@ -65,7 +65,18 @@ function setup() {
         
         //player
         if (moveRight || moveLeft) {
-            ctx.drawImage(<CanvasImageSource>document.getElementById("running" + runningCounter), 5000, 6000);
+            let xMove = 5000;
+
+            if (moveLeft) {
+                ctx.scale(-1, 1);
+                xMove *= -1;
+            }
+
+            ctx.drawImage(<CanvasImageSource>document.getElementById("running" + runningCounter), xMove, 6000);
+
+            if (moveLeft) {
+                ctx.scale(-1, 1);
+            }
         } else {
             if (space) {
                 ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), 5000, 6000 - (runningCounter * 100));
