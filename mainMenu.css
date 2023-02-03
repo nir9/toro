@@ -1,0 +1,33 @@
+    body{
+        background-color: gray;
+        align-items: center;
+    }
+    
+
+    .logo{
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .play_btn{
+        background-color: darkgray;
+        color:white;
+        font-size: xxx-large;
+        text-align: center;
+    }
+    
+    .play_btn:hover{
+        background-color: lightgray;
+    }
+    
+    .authors{
+        color:white;
+        bottom: 1cm;
+        position: absolute;
+        background-color: darkgray;
+        font-size: medium;
+    }
+
+  
+  
