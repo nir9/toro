@@ -88,7 +88,7 @@ function setup() {
         }
 
         else{//death           
-            ctx.drawImage(<CanvasImageSource>document.getElementById("death"), xMove, 6000);            
+                  
         }
 
         if (!isFacingRight) {
@@ -161,6 +161,8 @@ function setup() {
     /////////// termits
     const speed = 8
     const playerX = 1190
+    const frameCountToClimp = 500
+    let numTermite = 400
 
     class Termite{
         x: any
@@ -181,7 +183,7 @@ function setup() {
                 this.y += randomIntFromInterval(-1,1)
             }            
             else{
-                return true //death            
+                return true //nextStage
             }
 
             return false        
@@ -190,10 +192,66 @@ function setup() {
         
     }
 
+    class TermiteClimber{
+        x: any
+        y: any
+        frameCount:any
+
+        constructor(x:any,y:any){
+            this.x = x
+            this.y = y
+            this.frameCount = frameCountToClimp
+        }
+
+        public draw(ctx: any,screenX:number,screenY:number): void {
+            ctx.drawImage(<CanvasImageSource>document.getElementById("termite") ,screenX+this.x, this.y)         
+        }
+
+        public UpdatePos(screenX:number,screenY:number): boolean{   
+              
+            this.x -= randomIntFromInterval(-2,2)
+            this.y += randomIntFromInterval(-2,2)         
+            
+            this.frameCount++
+            
+            if(this.frameCount > 1000)
+                return true //nextStage
+
+            return false //nextStage
+        }
+        
+    }
+
+
+    class TermiteAfterClimber{
+        x: any
+        y: any
+
+        constructor(x:any,y:any){
+            this.x = x
+            this.y = y
+        }
+
+        public draw(ctx: any,screenX:number,screenY:number): void {
+            ctx.drawImage(<CanvasImageSource>document.getElementById("termite") ,screenX+this.x, this.y)         
+        }
+
+        public UpdatePos(screenX:number,screenY:number): boolean{
+           
+            this.x -= randomIntFromInterval(speed-2,speed+2)
+            this.y += randomIntFromInterval(-1,1)
+                
+            return false
+        }
+        
+    }
+
     let termites:Termite[] = []
+    let termitesClimbers:TermiteClimber[] = []
+    let termitesAfterClimbers:TermiteAfterClimber[] = []
 
     //up 1500 down 1700
-    spawn(5000,1600,100,10)
+    spawn(5000,1600,100,numTermite)
 
     function spawn(x:any,y:any,radius:any,many:any){
         
@@ -202,6 +260,23 @@ function setup() {
             const spawny = randomIntFromInterval(y-radius,y+radius)
             termites.push(new Termite(spawnX,spawny))
         }
+    }
+
+    function spawnclimber(x:any,y:any,horizontalRange:any,verticalRange:any){
+        
+        
+        const spawnX = randomIntFromInterval(x-horizontalRange,x+horizontalRange)
+        const spawny = randomIntFromInterval(y-verticalRange,y+verticalRange)
+        termitesClimbers.push(new TermiteClimber(spawnX,spawny))
+        
+    }
+
+    function spawnAfterClimber(x:any,y:any,radius:any){
+        
+        const spawnX = randomIntFromInterval(x-radius,x+radius)
+        const spawny = randomIntFromInterval(y-radius,y+radius)
+        termitesAfterClimbers.push(new TermiteAfterClimber(spawnX,spawny))
+        
     }
         
 
@@ -212,26 +287,51 @@ function setup() {
         for (let i in termites) {
             termites[i].draw(ctx,x,y)
         }
+
+        for (let i in termitesClimbers) {
+            termitesClimbers[i].draw(ctx,x,y)
+        }
         
+        for (let i in termitesAfterClimbers) {
+            termitesAfterClimbers[i].draw(ctx,x,y)
+        }
 
         ctx.scale(2, 2);
     }
 
-    function termiteUpdatePos(x: any,y:any) {
-        
+    function termiteUpdatePos(x: any,y:any) {        
         for (let i in termites) {
-            const death = termites[i].UpdatePos(x,y)
-            if(death){
-                playerDeath()
-                delete termites[i]
+            const nextStage = termites[i].UpdatePos(x,y)
+            if(nextStage){                
+                delete termites[i]    
+                numTermite--                           
+            
+                if(numTermite == 0){
+                    playerDeath()
+                }                    
+
+                spawnclimber(1200,1400,60,200)
                 break
             }
-        }    
+        }
+               
+        for (let i in termitesClimbers) {
+           
+            const nextStage = termitesClimbers[i].UpdatePos(x,y)
+            if(nextStage){       
+                delete termitesClimbers[i] 
+
+                spawnAfterClimber(1200,1600,100)
+            }
+        }
+
+        for (let i in termitesAfterClimbers) {
+            termitesAfterClimbers[i].UpdatePos(x,y)
+        }
     }
 
     function playerDeath(){   
-        death = true;
-        termites = [] ;    
+        death = true;          
         console.log("death")
     }
 }
