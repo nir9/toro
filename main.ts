@@ -150,6 +150,7 @@ function setup() {
     let isFacingRight = true;
     let moveRight = false;
     let moveLeft = false;
+    let attack = false;
     let space = false;
     let doubleJump = false;
     let debugMod = true;
@@ -162,6 +163,7 @@ function setup() {
 
     ctx.fillStyle ="#666";
     let runningCounter = 1;
+    let attackCounter = 1;
     let jumpingCounter = 1;
     let standingCounter = 1;
     let death = false;
@@ -172,6 +174,14 @@ function setup() {
             runningCounter = 1;
         }
     }, 132);
+
+    setInterval(() => {
+        attackCounter++;
+        if (attackCounter > 8) {
+            attackCounter = 1;
+            attack = false;
+        }
+    }, 60);
 
     setInterval(() => {
         jumpingCounter++;
@@ -237,8 +247,6 @@ function setup() {
 
         handleParticles(ctx);
 
-       
-
         let xMove = 500;
 
         if (!isFacingRight) {
@@ -249,6 +257,11 @@ function setup() {
         
         if (space) {
             ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), xMove, playerY - getJumpingDelta() * 2);
+        }
+
+        else if (attack) {
+            debugger;
+            ctx.drawImage(<CanvasImageSource>document.getElementById("attack" + attackCounter), xMove, playerY);
         }
 
         else if (moveRight || moveLeft) {
@@ -280,6 +293,7 @@ function setup() {
 
     window.addEventListener("keydown", (ev) => {
         let wasSpace = false;
+
         if (space) {
             wasSpace = true;
         }
@@ -293,6 +307,7 @@ function setup() {
         if (!space) {
             moveRight = isWalkRightEvent(ev);
             moveLeft = isWalkLeftEvent(ev);
+            attack = ev.code === "KeyF";
 
             if (moveRight || moveLeft) {
                 isFacingRight = moveRight;
@@ -301,6 +316,10 @@ function setup() {
 
         if (space) {
             jumpingCounter = 1;
+        }
+
+        if (attack) {
+            attackCounter = 1;
         }
     });
 
@@ -333,10 +352,11 @@ function setup() {
             if (x > 0) {
                 // alert("limit");
             } else {
-            x += 20;
-            if (x < -1600 && x > -2800) {
-                y += 50;
-            }
+                x += 20;
+
+                if (x < -1700 && x > -2800) {
+                    y += 50;
+                }
             }
         }
 
