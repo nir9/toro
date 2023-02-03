@@ -1,4 +1,5 @@
-World coords vs Canvas coords
-Directions
-Enemies - Termites
+Jump bg
+Double jump
+Fall down
+
 

@@ -1,3 +1,19 @@
+function curveValue(value: number, middle: number) {
+    if (value > middle) {
+        return middle - (value - middle);
+    }
+
+    return value;
+}
+
+function isWalkLeftEvent(e: KeyboardEvent) {
+    return e.code === "ArrowLeft" || e.code === "KeyA";
+}
+
+function isWalkRightEvent(e: KeyboardEvent) {
+    return e.code === "ArrowRight" || e.code === "KeyD";
+}
+
 function setup() {
     let canvas = <HTMLCanvasElement>document.getElementById("game");
         canvas.height = window.innerHeight;
@@ -60,8 +76,14 @@ function setup() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.scale(0.5, 0.5);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x, 200 + y, 4096, 1714);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x + 4096, 200 + y, 4096, 1714);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("bg-1"), 0, 0, 11246, 1714);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("roots-back"), x / 10, 0, 11246, 1714);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("roots-front"), x / 10, 0, 11246, 1714);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x, 200 + y, 11246, 1714);
+        ctx.scale(0.5, 0.5);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("above-back"), 0 + x, 0, 11246, 1714);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("above-front"), 0 + x + 8000, 0, 11246, 1714);
+        ctx.scale(2, 2);
        
         ctx.scale(2, 2);
         ctx.scale(0.1, 0.1);
@@ -75,7 +97,7 @@ function setup() {
         }
         
         if (space) {
-            ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), xMove, 6000 - (jumpingCounter * 300));
+            ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), xMove, 6000 - (curveValue(jumpingCounter, 5) * 300));
         }
         else if (moveRight || moveLeft) {
 
@@ -100,17 +122,14 @@ function setup() {
 
         //termite    
         termiteDraw(ctx,x,y)
-       
-        
-        //ctx.restore();
     }
 
     window.addEventListener("keydown", (ev) => {
         space = ev.code === "Space" || ev.code === "ArrowUp" || ev.code === "KeyW";
 
         if (!space) {
-            moveRight = ev.code === "ArrowRight" || ev.code === "KeyD";
-            moveLeft = ev.code === "ArrowLeft" || ev.code === "KeyA";
+            moveRight = isWalkRightEvent(ev);
+            moveLeft = isWalkLeftEvent(ev);
 
             if (moveRight || moveLeft) {
                 isFacingRight = moveRight;
@@ -123,11 +142,11 @@ function setup() {
     });
 
     window.addEventListener("keyup", (ev) => {
-        if (ev.code === "ArrowRight") {
+        if (isWalkRightEvent(ev)) {
             moveRight = false;
         }
 
-        if (ev.code === "ArrowLeft") {
+        if (isWalkLeftEvent(ev)) {
             moveLeft = false;
         }
     });
