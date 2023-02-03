@@ -126,7 +126,7 @@ function setup() {
 
         ctx.drawImage(<CanvasImageSource>document.getElementById("bg-1"), 0, 0);
 
-        ctx.drawImage(<CanvasImageSource>document.getElementById("roots-back"), x / 5, 0);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("roots-back"), x / 10, 0);
         ctx.drawImage(<CanvasImageSource>document.getElementById("roots-front"), x / 5, 0);
 
         ctx.drawImage(<CanvasImageSource>document.getElementById("above-back"), 0 + x, -100);
@@ -134,6 +134,7 @@ function setup() {
         ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x, 100 + y);
         
         ctx.drawImage(<CanvasImageSource>document.getElementById("platform-1"), 1000 + x, 450 );
+        ctx.drawImage(<CanvasImageSource>document.getElementById("small-cube-1"), 500 + x, 450 );
         handleParticles(ctx);
 
        
