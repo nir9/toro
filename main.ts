@@ -67,6 +67,14 @@ function setup() {
         }
     }, 200);
 
+    function getJumpingDelta() {
+        if (!space) {
+            return 0;
+        }
+
+        return (curveValue(jumpingCounter, 5) * 120);
+    }
+
     function update() {
         
         if (ctx === null) {
@@ -76,11 +84,14 @@ function setup() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.scale(0.5, 0.5);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("bg-1"), 0, 0, 11246, 1714);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("roots-back"), x / 10, 0, 11246, 1714);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("roots-front"), x / 10, 0, 11246, 1714);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x, 200 + y, 11246, 1714);
-        ctx.fillRect(5000 + x, 1200, 500, 100);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("bg-1"), 0, 0);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("roots-back"), x / 10, 0);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("roots-front"), x / 10, 0);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x, 200 + y + getJumpingDelta());
+        ctx.scale(0.25, 0.25);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("platform-1"), 5000 + x * 4, 4000 + getJumpingDelta() * 4);
+        ctx.scale(4, 4);
+
         ctx.scale(0.5, 0.5);
         ctx.drawImage(<CanvasImageSource>document.getElementById("above-back"), 0 + x, 0, 11246, 1714);
         ctx.drawImage(<CanvasImageSource>document.getElementById("above-front"), 0 + x + 8000, 0, 11246, 1714);
@@ -98,7 +109,7 @@ function setup() {
         }
         
         if (space) {
-            ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), xMove, 6000 - (curveValue(jumpingCounter, 5) * 500));
+            ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), xMove, 6000 );
         }
         else if (moveRight || moveLeft) {
 
