@@ -1,3 +1,5 @@
+let x = 1;
+let y = 0;
 var particlesTimer = 0;
 
 interface Particle {
@@ -17,11 +19,15 @@ function setupParticles(canvas: HTMLCanvasElement) {
 function handleParticles(ctx: CanvasRenderingContext2D) {
     for (const particle of particles) {
         ctx.beginPath();
-        ctx.arc(particle.x + Math.floor(particlesTimer / 3), particle.y, 5, 0, 2 * Math.PI);
+        ctx.fillStyle= "rgba(255,255,255, 0.2)";
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = "white";
+        ctx.arc(particle.x + Math.floor(particlesTimer / 3) + x, particle.y + Math.floor(particle.rnd * 600), 5 + Math.floor(particle.rnd * 5), 0, 2 * Math.PI);
         ctx.fill();
+        ctx.shadowBlur = 0;
     }
 
-    particlesTimer ++;
+    particlesTimer++;
 }
 
 function curveValue(value: number, middle: number) {
@@ -70,8 +76,6 @@ function setup() {
     }
 
     ctx.fillStyle ="#666";
-    let x = 1;
-    let y = 0;
     let runningCounter = 1;
     let jumpingCounter = 1;
     let standingCounter = 1;
