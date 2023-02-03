@@ -1,6 +1,6 @@
 let x = 1;
 let y = 0;
-const defaultPlayerY = 540;
+const defaultPlayerY = 640;
 let playerY = defaultPlayerY;
 var particlesTimer = 0;
 var drawDoor = true;
@@ -13,6 +13,12 @@ interface Particle {
 }
 
 let particles: Particle[] = [];
+
+function drawBlock(ctx: any, x: number, y: number, width: number) {
+    ctx.fillStyle ="#14171d";
+    ctx.fillRect(x, y, width, 500);
+    ctx.fillStyle = "#666";
+}
 
 function setupParticles(canvas: HTMLCanvasElement) {
     for (let i = 0; i < 100; i++) {
@@ -39,7 +45,7 @@ function drawPlatform(ctx: CanvasRenderingContext2D, platform: GameObject, clear
     platform.x2 += x;
 
     if (!platform.shouldNotDraw) {
-        ctx.drawImage(<CanvasImageSource>platform.elm, platform.x1, platform.y1);
+        ctx.drawImage(<CanvasImageSource>platform.elm, platform.x1, platform.y1 + y);
     }
 
     if (areObjectsColliding(platform, playerBox)) {
@@ -129,7 +135,7 @@ function setupPlatforms(): GameObject[] {
     const plat3Y = 300;
     const plat3: GameObject = { x1: plat3X, y1: plat3Y, x2: (plat3X + <number>platElm.width), y2: (plat3Y + <number>platElm.height), elm: platElm };
 
-    return [door, plat1, plat2, plat3];
+    return [door /*, plat1, plat2, plat3 */];
 }
 
 
@@ -209,13 +215,19 @@ function setup() {
 
 
         ctx.drawImage(<CanvasImageSource>document.getElementById("bg-1"), 0, 0);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("roots-back"), x / 10, y + 1000);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("roots-front"), x / 5, y + 1000);
 
-        ctx.drawImage(<CanvasImageSource>document.getElementById("roots-back"), x / 10, 0);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("roots-front"), x / 5, 0);
-
-        ctx.drawImage(<CanvasImageSource>document.getElementById("above-back"), 0 + x, -100);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("above-front"), 0 + x + 2000, -100);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x, 100 + y);
+        // ctx.drawImage(<CanvasImageSource>document.getElementById("above-back"), 0 + x, -100);
+        // ctx.drawImage(<CanvasImageSource>document.getElementById("above-front"), 0 + x + 2000, -100);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("branch-1"), 0 + x + 2200+ 50, 200 + y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("sw-curve-1"), 2100 + x, 100 + y + 750);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("ne-curve-1"), x - 300, y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("we-s-curve-1"), x + 2300, y);
+        drawBlock(ctx, x - 100, 500 + y + 300, 500); 
+        drawBlock(ctx, x - 100, 500 + y + 400, 2700); 
+        ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x + 200 + 100, 580 + y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("edge-1"), 0 + x + 200 + 100 + 2200, 780 + y);
         
         for (let i = 0; i < platforms.length; i++) {
             drawPlatform(ctx, platforms[i], i === 0);
@@ -248,7 +260,7 @@ function setup() {
         }
 
         else {//death           
-            alert("death");
+            // alert("death");
         }
 
         if (!isFacingRight) {
@@ -305,14 +317,27 @@ function setup() {
     function updatePos() {
         
         if (moveRight) {
-            x -= 20;
-            if (x < -1800) {
-                y -= 100;
+            if (x < -1650) {
+
+            } else {
+
+                x -= 20;
+                if (x < -1700 && x > -2800) {
+                    y -= 50;
+
+                }
             }
         }
 
         if (moveLeft) {
+            if (x > 0) {
+                // alert("limit");
+            } else {
             x += 20;
+            if (x < -1600 && x > -2800) {
+                y += 50;
+            }
+            }
         }
 
         //colider
@@ -332,7 +357,8 @@ function setup() {
 
 
         // termite     
-        termiteUpdatePos(x,y)
+        // todo: temporary
+        // termiteUpdatePos(x,y)
 
         update();
         requestAnimationFrame(updatePos);
