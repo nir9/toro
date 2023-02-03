@@ -477,7 +477,7 @@ function setup() {
 
     let termites:Termite[] = []   
 
-    spawnLine(5000/2,1600/2,1400/2,numTermite)
+    //spawnLine(5000/2,1600/2,1400/2,numTermite)
     //spawnInCircle(5000/2,1600/2,100,numTermite)
     //spawnCircle(5000/2,1600/2,100,numTermite)
     //spawnRectangle(5000/2,1600/2,100,numTermite)

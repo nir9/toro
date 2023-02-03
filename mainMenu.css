@@ -1,33 +1,38 @@
-    body{
-        background-color: gray;
-        align-items: center;
-    }
-    
+body{
+    background-image: url("assets/bgMainMenu.png");
+    background-repeat: no-repeat;
+}
+   
 
-    .logo{
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .play_btn{
-        background-color: darkgray;
-        color:white;
-        font-size: xxx-large;
-        text-align: center;
-    }
-    
-    .play_btn:hover{
-        background-color: lightgray;
-    }
-    
-    .authors{
-        color:white;
-        bottom: 1cm;
-        position: absolute;
-        background-color: darkgray;
-        font-size: medium;
-    }
-
+.mainMenu{
+    position: fixed;
+    left: 400px;
+    top: 10px;
+    width: 500px;
+    height: 500px;
   
-  
+}
+.logo{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.play_btn{
+    width: 90%;
+    margin-left: 5%;
+    color: white;
+    font-size: xxx-large;
+    text-align: center;
+    background: rgba(169, 169, 169, 0.37);
+ }
+ .play_btn:hover{
+    background-color: lightgray;
+}
+
+.authors{
+    color: white;
+    background-color: rgba(169, 169, 169, 0.438);
+    font-size: medium;
+    margin-left: 5%;
+    width: fit-content;
+}
