@@ -1,3 +1,29 @@
+var particlesTimer = 0;
+
+interface Particle {
+    x: number;
+    y: number;
+    rnd: number;
+}
+
+let particles: Particle[] = [];
+
+function setupParticles(canvas: HTMLCanvasElement) {
+    for (let i = 0; i < 15; i++) {
+        particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, rnd: Math.random() });
+    }
+}
+
+function handleParticles(ctx: CanvasRenderingContext2D) {
+    for (const particle of particles) {
+        ctx.beginPath();
+        ctx.arc(particle.x + Math.floor(particlesTimer / 3), particle.y, 5, 0, 2 * Math.PI);
+        ctx.fill();
+    }
+
+    particlesTimer ++;
+}
+
 function curveValue(value: number, middle: number) {
     if (value > middle) {
         return middle - (value - middle);
@@ -16,14 +42,18 @@ function isWalkRightEvent(e: KeyboardEvent) {
 
 function setup() {
     let canvas = <HTMLCanvasElement>document.getElementById("game");
-        canvas.height = window.innerHeight;
-        canvas.width = window.innerWidth;
+
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+    setupParticles(canvas);
 
     window.addEventListener("resize", () => {
         canvas.height = window.innerHeight;
         canvas.width = window.innerWidth;
         if (ctx === null) return;
         ctx.fillStyle ="#666";
+        
+        setupParticles(canvas);
 
     });
 
@@ -93,11 +123,12 @@ function setup() {
         ctx.drawImage(<CanvasImageSource>document.getElementById("roots-back"), x / 5, 0);
         ctx.drawImage(<CanvasImageSource>document.getElementById("roots-front"), x / 5, 0);
 
-        ctx.drawImage(<CanvasImageSource>document.getElementById("above-back"), 0 + x, 0);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("above-front"), 0 + x + 2000, 0);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x, 100 + y + getJumpingDelta());
+        ctx.drawImage(<CanvasImageSource>document.getElementById("above-back"), 0 + x, -100);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("above-front"), 0 + x + 2000, -100);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x, 100 + y);
         
-        ctx.drawImage(<CanvasImageSource>document.getElementById("platform-1"), 1000 + x, 500 + getJumpingDelta());
+        ctx.drawImage(<CanvasImageSource>document.getElementById("platform-1"), 1000 + x, 450 );
+        handleParticles(ctx);
 
        
         ctx.scale(0.1, 0.1);
@@ -204,7 +235,7 @@ function setup() {
         }
 
         public draw(ctx: any,screenX:number,screenY:number): void {
-            ctx.drawImage(<CanvasImageSource>document.getElementById("termite") ,screenX+this.x, this.y + getJumpingDelta())         
+            ctx.drawImage(<CanvasImageSource>document.getElementById("termite") ,screenX+this.x, this.y)         
         }
 
         public UpdatePos(screenX:number,screenY:number): boolean{
