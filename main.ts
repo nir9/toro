@@ -22,6 +22,9 @@ function setup() {
     window.addEventListener("resize", () => {
         canvas.height = window.innerHeight;
         canvas.width = window.innerWidth;
+        if (ctx === null) return;
+        ctx.fillStyle ="#666";
+
     });
 
 
@@ -58,7 +61,7 @@ function setup() {
             jumpingCounter = 1;
             space = false;
         }
-    }, 64);
+    }, 60);
 
     setInterval(() => {
         standingCounter++;
@@ -72,7 +75,7 @@ function setup() {
             return 0;
         }
 
-        return (curveValue(jumpingCounter, 5) * 120);
+        return (curveValue(jumpingCounter, 5) * 20);
     }
 
     function update() {
@@ -83,21 +86,20 @@ function setup() {
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.scale(0.5, 0.5);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("bg-1"), 0, 0);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("roots-back"), x / 10, 0);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("roots-front"), x / 10, 0);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x, 200 + y + getJumpingDelta());
-        ctx.scale(0.25, 0.25);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("platform-1"), 5000 + x * 4, 4000 + getJumpingDelta() * 4);
-        ctx.scale(4, 4);
 
-        ctx.scale(0.5, 0.5);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("above-back"), 0 + x, 0, 11246, 1714);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("above-front"), 0 + x + 8000, 0, 11246, 1714);
-        ctx.scale(2, 2);
+
+        ctx.drawImage(<CanvasImageSource>document.getElementById("bg-1"), 0, 0);
+
+        ctx.drawImage(<CanvasImageSource>document.getElementById("roots-back"), x / 5, 0);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("roots-front"), x / 5, 0);
+
+        ctx.drawImage(<CanvasImageSource>document.getElementById("above-back"), 0 + x, 0);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("above-front"), 0 + x + 2000, 0);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x, 100 + y + getJumpingDelta());
+        
+        ctx.drawImage(<CanvasImageSource>document.getElementById("platform-1"), 1000 + x, 500 + getJumpingDelta());
+
        
-        ctx.scale(2, 2);
         ctx.scale(0.1, 0.1);
 
         let xMove = 5000;
@@ -109,12 +111,11 @@ function setup() {
         }
         
         if (space) {
-            ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), xMove, 6000 );
+            ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), xMove, 6000 - getJumpingDelta() * 20);
         }
+
         else if (moveRight || moveLeft) {
-
             ctx.drawImage(<CanvasImageSource>document.getElementById("running" + runningCounter), xMove, 6000);
-
         }
        
         else if(!death){
@@ -166,11 +167,11 @@ function setup() {
     function updatePos() {
         
         if (moveRight) {
-            x -= 40;
+            x -= 20;
         }
 
         if (moveLeft) {
-            x += 40;
+            x += 20;
         }
 
         //termite        
@@ -203,7 +204,7 @@ function setup() {
         }
 
         public draw(ctx: any,screenX:number,screenY:number): void {
-            ctx.drawImage(<CanvasImageSource>document.getElementById("termite") ,screenX+this.x, this.y)         
+            ctx.drawImage(<CanvasImageSource>document.getElementById("termite") ,screenX+this.x, this.y + getJumpingDelta())         
         }
 
         public UpdatePos(screenX:number,screenY:number): boolean{
