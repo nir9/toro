@@ -11,7 +11,7 @@ interface Particle {
 let particles: Particle[] = [];
 
 function setupParticles(canvas: HTMLCanvasElement) {
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 100; i++) {
         particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, rnd: Math.random() });
     }
 }
@@ -19,10 +19,10 @@ function setupParticles(canvas: HTMLCanvasElement) {
 function handleParticles(ctx: CanvasRenderingContext2D) {
     for (const particle of particles) {
         ctx.beginPath();
-        ctx.fillStyle= "rgba(255,255,255, 0.2)";
+        ctx.fillStyle= "rgba(255,255,255, " + particle.rnd / 10 + ")";
         ctx.shadowBlur = 20;
         ctx.shadowColor = "white";
-        ctx.arc(particle.x + Math.floor(particlesTimer / 3) + x, particle.y + Math.floor(particle.rnd * 600), 5 + Math.floor(particle.rnd * 5), 0, 2 * Math.PI);
+        ctx.arc(particle.x + Math.floor(particlesTimer / 3) + x, particle.y, 5 + Math.floor(particle.rnd * 5), 0, 2 * Math.PI);
         ctx.fill();
         ctx.shadowBlur = 0;
     }
@@ -69,6 +69,7 @@ function setup() {
     let moveRight = false;
     let moveLeft = false;
     let space = false;
+    let doubleJump = false;
     let debugMod = true;
 
     if (ctx === null) {
@@ -93,9 +94,17 @@ function setup() {
 
     setInterval(() => {
         jumpingCounter++;
+
         if (jumpingCounter > 10) {
             jumpingCounter = 1;
+
             space = false;
+
+            if (doubleJump) {
+                doubleJump = false;
+                // TODO: Consider thinking of a solution for transition back to ground
+                space = false;
+            }
         }
     }, 60);
 
@@ -111,7 +120,7 @@ function setup() {
             return 0;
         }
 
-        return (curveValue(jumpingCounter, 5) * 20);
+        return (curveValue(jumpingCounter, doubleJump ? 10 : 5) * 20);
     }
 
     function update() {
@@ -183,7 +192,16 @@ function setup() {
     }
 
     window.addEventListener("keydown", (ev) => {
+        let wasSpace = false;
+        if (space) {
+            wasSpace = true;
+        }
+
         space = ev.code === "Space" || ev.code === "ArrowUp" || ev.code === "KeyW";
+
+        if (wasSpace && space) {
+            doubleJump = true;
+        }
 
         if (!space) {
             moveRight = isWalkRightEvent(ev);
