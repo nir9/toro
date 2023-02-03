@@ -1,5 +1,3 @@
-Particles
-Collision
-Double jump
+Collision on floor
 Fall down
 
