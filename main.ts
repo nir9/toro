@@ -80,6 +80,7 @@ function setup() {
         ctx.drawImage(<CanvasImageSource>document.getElementById("roots-back"), x / 10, 0, 11246, 1714);
         ctx.drawImage(<CanvasImageSource>document.getElementById("roots-front"), x / 10, 0, 11246, 1714);
         ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x, 200 + y, 11246, 1714);
+        ctx.fillRect(5000 + x, 1200, 500, 100);
         ctx.scale(0.5, 0.5);
         ctx.drawImage(<CanvasImageSource>document.getElementById("above-back"), 0 + x, 0, 11246, 1714);
         ctx.drawImage(<CanvasImageSource>document.getElementById("above-front"), 0 + x + 8000, 0, 11246, 1714);
@@ -97,7 +98,7 @@ function setup() {
         }
         
         if (space) {
-            ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), xMove, 6000 - (curveValue(jumpingCounter, 5) * 300));
+            ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), xMove, 6000 - (curveValue(jumpingCounter, 5) * 500));
         }
         else if (moveRight || moveLeft) {
 
@@ -118,8 +119,8 @@ function setup() {
         }
 
         ctx.scale(10, 10);
-        
 
+        
         //termite    
         termiteDraw(ctx,x,y)
     }
