@@ -140,19 +140,19 @@ function setup() {
         if (!isFacingRight) {
             ctx.scale(-1, 1);
             xMove *= -1;
-            xMove -= 1500;
+            xMove -= 1900;
         }
         
         if (space) {
-            ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), xMove, 6000 - getJumpingDelta() * 20);
+            ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), xMove, 5400 - getJumpingDelta() * 20);
         }
 
         else if (moveRight || moveLeft) {
-            ctx.drawImage(<CanvasImageSource>document.getElementById("running" + runningCounter), xMove, 6000);
+            ctx.drawImage(<CanvasImageSource>document.getElementById("running" + runningCounter), xMove, 5400);
         }
        
         else if(!death){
-            ctx.drawImage(<CanvasImageSource>document.getElementById("standing" + standingCounter), xMove, 6000);
+            ctx.drawImage(<CanvasImageSource>document.getElementById("standing" + standingCounter), xMove, 5400);
         }
 
         else{//death           
@@ -217,7 +217,7 @@ function setup() {
         //colider
         playerBox.left = 5500/10
         playerBox.right = 6550/10
-        playerBox.top = 6000/10
+        playerBox.top = 5400/10
         playerBox.bottom = 8020/10
 
         if(space){
@@ -390,7 +390,7 @@ function setup() {
                 delete termites[i]    
                 numTermite--                           
             
-                if(numTermite == 0){
+                if(numTermite < 50){
                     playerDeath()
                 }                    
 
