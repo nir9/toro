@@ -25,7 +25,8 @@ function setup() {
     let runningCounter = 1;
     let jumpingCounter = 1;
     let standingCounter = 1;
-
+    let death = false;
+    
     
 
     setInterval(() => {
@@ -51,6 +52,7 @@ function setup() {
     }, 200);
 
     function update() {
+        
         if (ctx === null) {
             return;
         }
@@ -81,8 +83,12 @@ function setup() {
 
         }
        
-        else {
+        else if(!death){
             ctx.drawImage(<CanvasImageSource>document.getElementById("standing" + standingCounter), xMove, 6000);
+        }
+
+        else{//death           
+            ctx.drawImage(<CanvasImageSource>document.getElementById("death"), xMove, 6000);            
         }
 
         if (!isFacingRight) {
@@ -127,6 +133,7 @@ function setup() {
     });
 
     function updatePos() {
+        
         if (moveRight) {
             x -= 40;
         }
@@ -143,67 +150,91 @@ function setup() {
     }
 
     requestAnimationFrame(updatePos);
-}
-
-
-function randomIntFromInterval(min:any, max:any) { // min and max included 
-    return Math.floor(Math.random() * (max - min + 1) + min)
-  }
-
-/////////// termits
-const speed = 8
-
-class Termite{
-    x: any
-    y: any
-
-    constructor(x:any,y:any){
-        this.x = x
-        this.y = y
-    }
-
-    public draw(ctx: any,screenX:number,screenY:number): void {
-        ctx.drawImage(<CanvasImageSource>document.getElementById("termite") ,screenX+this.x, this.y)         
-    }
-
-    public UpdatePos(screenX:number,screenY:number): void{
-        this.x -= 8
-    }
     
-}
-
-let termites:Termite[] = []
-
-//up 1500 down 1700
-spawn(5000,1600,100,10)
-
-function spawn(x:any,y:any,radius:any,many:any){
-    
-    for (var _i = 0; _i < many; _i++) {
-        const spawnX = randomIntFromInterval(x-radius,x+radius)
-        const spawny = randomIntFromInterval(y-radius,y+radius)
-        termites.push(new Termite(spawnX,spawny))
-    }
-}
     
 
-function termiteDraw(ctx: any,x:any,y:any) {
-    ctx.scale(0.5, 0.5);
+    function randomIntFromInterval(min:any, max:any) { // min and max included 
     
-    for (let i in termites) {
-        termites[i].draw(ctx,x,y)
+        return Math.floor(Math.random() * (max - min + 1) + min)
     }
-    
 
-    ctx.scale(2, 2);
+    /////////// termits
+    const speed = 8
+    const playerX = 1190
+
+    class Termite{
+        x: any
+        y: any
+
+        constructor(x:any,y:any){
+            this.x = x
+            this.y = y
+        }
+
+        public draw(ctx: any,screenX:number,screenY:number): void {
+            ctx.drawImage(<CanvasImageSource>document.getElementById("termite") ,screenX+this.x, this.y)         
+        }
+
+        public UpdatePos(screenX:number,screenY:number): boolean{
+            if(this.x > playerX){
+                this.x -= randomIntFromInterval(speed-2,speed+2)
+                this.y += randomIntFromInterval(-1,1)
+            }            
+            else{
+                return true //death            
+            }
+
+            return false        
+            
+        }
+        
+    }
+
+    let termites:Termite[] = []
+
+    //up 1500 down 1700
+    spawn(5000,1600,100,10)
+
+    function spawn(x:any,y:any,radius:any,many:any){
+        
+        for (var _i = 0; _i < many; _i++) {
+            const spawnX = randomIntFromInterval(x-radius,x+radius)
+            const spawny = randomIntFromInterval(y-radius,y+radius)
+            termites.push(new Termite(spawnX,spawny))
+        }
+    }
+        
+
+    function termiteDraw(ctx: any,x:any,y:any) {
+        
+        ctx.scale(0.5, 0.5);
+        
+        for (let i in termites) {
+            termites[i].draw(ctx,x,y)
+        }
+        
+
+        ctx.scale(2, 2);
+    }
+
+    function termiteUpdatePos(x: any,y:any) {
+        
+        for (let i in termites) {
+            const death = termites[i].UpdatePos(x,y)
+            if(death){
+                playerDeath()
+                delete termites[i]
+                break
+            }
+        }    
+    }
+
+    function playerDeath(){   
+        death = true;
+        termites = [] ;    
+        console.log("death")
+    }
 }
-
-function termiteUpdatePos(x: any,y:any) {
-    for (let i in termites) {
-        termites[i].UpdatePos(x,y)
-    }    
-}
-
 
 
 setup();
