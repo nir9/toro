@@ -73,20 +73,9 @@ function areObjectColliding(obj1: GameObject, obj2: GameObject): boolean {
 function setup() {
     let canvas = <HTMLCanvasElement>document.getElementById("game");
 
-    canvas.height = window.innerHeight;
-    canvas.width = window.innerWidth;
+    canvas.height = 1080;
+    canvas.width = 1920;
     setupParticles(canvas);
-
-    window.addEventListener("resize", () => {
-        canvas.height = window.innerHeight;
-        canvas.width = window.innerWidth;
-        if (ctx === null) return;
-        ctx.fillStyle ="#666";
-        
-        setupParticles(canvas);
-
-    });
-
 
     var ctx = canvas.getContext("2d");
     let isFacingRight = true;
@@ -274,7 +263,7 @@ function setup() {
         playerBox.x1 = 550
         playerBox.x2 = 655
         playerBox.y1 = playerY
-        playerBox.y2 = 802
+        playerBox.y2 = playerY + 200
 
         if(space){
             playerBox.y1 = 300
@@ -453,13 +442,11 @@ function setup() {
 
                 const newStage = new TermiteAfterClimber(spawnX,spawnY)
 
-                this.context?.setStage(newStage)//destroy
+                this.context?.setStage(newStage) //destroy
                 this.context?.subClimberCounter()
             }                                                
         }
-        
     }
-
 
     class TermiteAfterClimber extends Stage{
         x: any
@@ -513,7 +500,7 @@ function setup() {
     function spawnCircle(x:any,y:any,radius:any,many:any){
         
         for (var _i = 0; _i < many; _i++) {
-            //tenk to stackoverflow
+            // tenk to stackoverflow
             var angle = Math.random()*Math.PI*2;
             const spawnX = x+Math.cos(angle)*radius;
             const spawny = y+Math.sin(angle)*radius;            
