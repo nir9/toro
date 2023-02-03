@@ -1,5 +1,7 @@
 let x = 1;
 let y = 0;
+const defaultPlayerY = 540;
+let playerY = defaultPlayerY;
 var particlesTimer = 0;
 
 interface Particle {
@@ -46,6 +48,28 @@ function isWalkRightEvent(e: KeyboardEvent) {
     return e.code === "ArrowRight" || e.code === "KeyD";
 }
 
+interface GameObject {
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+}
+
+function areObjectColliding(obj1: GameObject, obj2: GameObject): boolean {
+    if (obj2.x1 > obj1.x1 && obj2.x1 < obj1.x2) {
+
+        if ((obj2.y1 > obj1.y1 && obj2.y1 < obj1.y2)) {
+            return true;
+        }
+
+        if (obj2.y2 > obj1.y1 && obj2.y1 < obj1.y1) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
 function setup() {
     let canvas = <HTMLCanvasElement>document.getElementById("game");
 
@@ -81,7 +105,7 @@ function setup() {
     let jumpingCounter = 1;
     let standingCounter = 1;
     let death = false;
-    let playerBox = {top:0, left:0, right:0, bottom:0}
+    let playerBox: GameObject = {y1:0, x1:0, x2:0, y2:0}
     
     
 
@@ -142,31 +166,43 @@ function setup() {
         ctx.drawImage(<CanvasImageSource>document.getElementById("above-front"), 0 + x + 2000, -100);
         ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x, 100 + y);
         
-        ctx.drawImage(<CanvasImageSource>document.getElementById("platform-1"), 1000 + x, 450 );
+        const platX = 1000 + x;
+        const platY = 250;
+        const platformElm = <CanvasImageSource>document.getElementById("platform-1");
+        const platformBox: GameObject = { x1: platX, y1: platY, x2: (platX + <number>platformElm.width), y2: (platY + <number>platformElm.height) };
+
+        ctx.drawImage(platformElm, platX, platY);
+
+        if (areObjectColliding(platformBox, playerBox)) {
+            playerY = platY-150;
+        } else {
+            playerY = defaultPlayerY;
+        }
+
         ctx.drawImage(<CanvasImageSource>document.getElementById("small-cube-1"), 500 + x, 450 );
+
         handleParticles(ctx);
 
        
-        ctx.scale(0.1, 0.1);
 
-        let xMove = 5000;
+        let xMove = 500;
 
         if (!isFacingRight) {
             ctx.scale(-1, 1);
             xMove *= -1;
-            xMove -= 1900;
+            xMove -= 190;
         }
         
         if (space) {
-            ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), xMove, 5400 - getJumpingDelta() * 20);
+            ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), xMove, playerY - getJumpingDelta() * 2);
         }
 
         else if (moveRight || moveLeft) {
-            ctx.drawImage(<CanvasImageSource>document.getElementById("running" + runningCounter), xMove, 5400);
+            ctx.drawImage(<CanvasImageSource>document.getElementById("running" + runningCounter), xMove, playerY);
         }
        
         else if(!death){
-            ctx.drawImage(<CanvasImageSource>document.getElementById("standing" + standingCounter), xMove, 5400);
+            ctx.drawImage(<CanvasImageSource>document.getElementById("standing" + standingCounter), xMove, playerY);
         }
 
         else{//death           
@@ -177,13 +213,10 @@ function setup() {
             ctx.scale(-1, 1);
         }
 
-        ctx.scale(10, 10);
-
-        
         //colider
         if(debugMod){
             ctx.fillStyle = "green";
-            ctx.strokeRect(playerBox.left,playerBox.top,playerBox.right - playerBox.left,playerBox.bottom - playerBox.top)
+            ctx.strokeRect(playerBox.x1,playerBox.y1,playerBox.x2 - playerBox.x1,playerBox.y2 - playerBox.y1)
         }
 
         
@@ -238,19 +271,22 @@ function setup() {
         }
 
         //colider
-        playerBox.left = 5500/10
-        playerBox.right = 6550/10
-        playerBox.top = 5400/10
-        playerBox.bottom = 8020/10
+        playerBox.x1 = 550
+        playerBox.x2 = 655
+        playerBox.y1 = playerY
+        playerBox.y2 = 802
 
         if(space){
-            playerBox.top = 3000/10
-            playerBox.bottom = 6020/10
+            playerBox.y1 = 300
+            playerBox.y2 = 602
+        }
+        if(doubleJump){
+            playerBox.y1 = 100
+            playerBox.y2 = 402
         }
 
 
-        //termite     
-        //console.log(x)     
+        // termite     
         termiteUpdatePos(x,y)
 
         update();
@@ -363,14 +399,14 @@ function setup() {
         public UpdatePos(screenX:number,screenY:number): void{
             this.frameCount++
             
-            if(screenX+this.x > playerBox.right || screenX+this.x < playerBox.left || this.y > playerBox.bottom || this.y < playerBox.top){
+            if(screenX+this.x > playerBox.x2 || screenX+this.x < playerBox.x1 || this.y > playerBox.y2 || this.y < playerBox.y1){
                 this.x -= randomIntFromInterval(speed-2,speed+2)
                 this.y += randomIntFromInterval(-1,1)
             }            
             else{        
                 console.log("Climber")    
-                const spawnX = randomIntFromInterval(playerBox.left,playerBox.right)
-                const spawny = randomIntFromInterval(playerBox.top,playerBox.bottom)
+                const spawnX = randomIntFromInterval(playerBox.x1,playerBox.x2)
+                const spawny = randomIntFromInterval(playerBox.y1,playerBox.y2)
                 
                 const newStage = new TermiteClimber(spawnX,spawny)
       
@@ -380,8 +416,9 @@ function setup() {
                 
             }        
 
-             if(this.frameCount > 2000)
-                this.context?.setStage(undefined)//destroy        
+             if(this.frameCount > 2000) {
+                this.context?.setStage(undefined) //destroy        
+             }
             
         }
         
@@ -411,8 +448,8 @@ function setup() {
             this.frameCount++
             
             if(this.frameCount > 1000){               
-                const spawnX = randomIntFromInterval(playerBox.left - 50,playerBox.left + 50)
-                const spawnY = randomIntFromInterval(playerBox.bottom - 50,playerBox.bottom)
+                const spawnX = randomIntFromInterval(playerBox.x1 - 50,playerBox.x1 + 50)
+                const spawnY = randomIntFromInterval(playerBox.y2 - 50,playerBox.y2)
 
                 const newStage = new TermiteAfterClimber(spawnX,spawnY)
 
