@@ -3,6 +3,8 @@ let y = 0;
 const defaultPlayerY = 540;
 let playerY = defaultPlayerY;
 var particlesTimer = 0;
+var drawDoor = true;
+let playerBox: GameObject = {y1:0, x1:0, x2:0, y2:0}
 
 interface Particle {
     x: number;
@@ -32,6 +34,30 @@ function handleParticles(ctx: CanvasRenderingContext2D) {
     particlesTimer++;
 }
 
+function drawPlatform(ctx: CanvasRenderingContext2D, platform: GameObject, clearAfterCollision: boolean = false) {
+    platform.x1 += x;
+    platform.x2 += x;
+
+    if (!platform.shouldNotDraw) {
+        ctx.drawImage(<CanvasImageSource>platform.elm, platform.x1, platform.y1);
+    }
+
+    if (areObjectsColliding(platform, playerBox)) {
+        if (clearAfterCollision) {
+            platform.shouldNotDraw = true;
+        } else {
+            playerY = platform.y1-150;
+        }
+    } else {
+        if (!clearAfterCollision) {
+            playerY = defaultPlayerY;
+        }
+    }
+
+    platform.x1 -= x;
+    platform.x2 -= x;
+}
+
 function curveValue(value: number, middle: number) {
     if (value > middle) {
         return middle - (value - middle);
@@ -53,9 +79,12 @@ interface GameObject {
     y1: number;
     x2: number;
     y2: number;
+
+    elm?: CanvasImageSource;
+    shouldNotDraw?: boolean;
 }
 
-function areObjectColliding(obj1: GameObject, obj2: GameObject): boolean {
+function areObjectsColliding(obj1: GameObject, obj2: GameObject): boolean {
     if (obj2.x1 > obj1.x1 && obj2.x1 < obj1.x2) {
 
         if ((obj2.y1 > obj1.y1 && obj2.y1 < obj1.y2)) {
@@ -66,9 +95,43 @@ function areObjectColliding(obj1: GameObject, obj2: GameObject): boolean {
             return true;
         }
     }
-    
+
+    if (obj1.x1 > obj2.x1 && obj1.x1 < obj2.x2) {
+
+        if ((obj1.y1 > obj2.y1 && obj1.y1 < obj2.y2)) {
+            return true;
+        }
+
+        if (obj1.y2 > obj2.y1 && obj1.y1 < obj2.y1) {
+            return true;
+        }
+    }
+
     return false;
 }
+
+function setupPlatforms(): GameObject[] {
+    const doorX = 1000;
+    const doorY = 250;
+    const doorElm = <CanvasImageSource>document.getElementById("door-1");
+    const door: GameObject = { x1: doorX, y1: doorY, x2: (doorX + <number>doorElm.width), y2: (doorY + <number>doorElm.height), elm: doorElm };
+
+    const platX = 1500;
+    const platY = 300;
+    const platElm = <CanvasImageSource>document.getElementById("platform-1");
+    const plat1: GameObject = { x1: platX, y1: platY, x2: (platX + <number>platElm.width), y2: (platY + <number>platElm.height), elm: platElm };
+
+    const plat2X = 2000;
+    const plat2Y = 300;
+    const plat2: GameObject = { x1: plat2X, y1: plat2Y, x2: (plat2X + <number>platElm.width), y2: (plat2Y + <number>platElm.height), elm: platElm };
+
+    const plat3X = 2700;
+    const plat3Y = 300;
+    const plat3: GameObject = { x1: plat3X, y1: plat3Y, x2: (plat3X + <number>platElm.width), y2: (plat3Y + <number>platElm.height), elm: platElm };
+
+    return [door, plat1, plat2, plat3];
+}
+
 
 function setup() {
     let canvas = <HTMLCanvasElement>document.getElementById("game");
@@ -89,14 +152,13 @@ function setup() {
         return;
     }
 
+    let platforms: GameObject[] = setupPlatforms();
+
     ctx.fillStyle ="#666";
     let runningCounter = 1;
     let jumpingCounter = 1;
     let standingCounter = 1;
     let death = false;
-    let playerBox: GameObject = {y1:0, x1:0, x2:0, y2:0}
-    
-    
 
     setInterval(() => {
         runningCounter++;
@@ -155,20 +217,11 @@ function setup() {
         ctx.drawImage(<CanvasImageSource>document.getElementById("above-front"), 0 + x + 2000, -100);
         ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x, 100 + y);
         
-        const platX = 1000 + x;
-        const platY = 250;
-        const platformElm = <CanvasImageSource>document.getElementById("platform-1");
-        const platformBox: GameObject = { x1: platX, y1: platY, x2: (platX + <number>platformElm.width), y2: (platY + <number>platformElm.height) };
-
-        ctx.drawImage(platformElm, platX, platY);
-
-        if (areObjectColliding(platformBox, playerBox)) {
-            playerY = platY-150;
-        } else {
-            playerY = defaultPlayerY;
+        for (let i = 0; i < platforms.length; i++) {
+            drawPlatform(ctx, platforms[i], i === 0);
         }
 
-        ctx.drawImage(<CanvasImageSource>document.getElementById("small-cube-1"), 500 + x, 450 );
+        // ctx.drawImage(<CanvasImageSource>document.getElementById("small-cube-1"), 500 + x, 450 );
 
         handleParticles(ctx);
 
@@ -194,8 +247,8 @@ function setup() {
             ctx.drawImage(<CanvasImageSource>document.getElementById("standing" + standingCounter), xMove, playerY);
         }
 
-        else{//death           
-                  
+        else {//death           
+            alert("death");
         }
 
         if (!isFacingRight) {
@@ -253,6 +306,9 @@ function setup() {
         
         if (moveRight) {
             x -= 20;
+            if (x < -1800) {
+                y -= 100;
+            }
         }
 
         if (moveLeft) {
