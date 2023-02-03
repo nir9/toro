@@ -30,6 +30,7 @@ function setup() {
     let moveRight = false;
     let moveLeft = false;
     let space = false;
+    let debugMod = true;
 
     if (ctx === null) {
         return;
@@ -42,6 +43,7 @@ function setup() {
     let jumpingCounter = 1;
     let standingCounter = 1;
     let death = false;
+    let playerBox = {top:0, left:0, right:0, bottom:0}
     
     
 
@@ -72,10 +74,11 @@ function setup() {
         if (ctx === null) {
             return;
         }
-
+        ctx.fillStyle = "gray";
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.scale(0.5, 0.5);
+
         ctx.drawImage(<CanvasImageSource>document.getElementById("bg-1"), 0, 0, 11246, 1714);
         ctx.drawImage(<CanvasImageSource>document.getElementById("roots-back"), x / 10, 0, 11246, 1714);
         ctx.drawImage(<CanvasImageSource>document.getElementById("roots-front"), x / 10, 0, 11246, 1714);
@@ -84,6 +87,7 @@ function setup() {
         ctx.drawImage(<CanvasImageSource>document.getElementById("above-back"), 0 + x, 0, 11246, 1714);
         ctx.drawImage(<CanvasImageSource>document.getElementById("above-front"), 0 + x + 8000, 0, 11246, 1714);
         ctx.scale(2, 2);
+
        
         ctx.scale(2, 2);
         ctx.scale(0.1, 0.1);
@@ -119,6 +123,12 @@ function setup() {
 
         ctx.scale(10, 10);
         
+        //colider
+        if(debugMod){
+            ctx.fillStyle = "green";
+            ctx.strokeRect(playerBox.left,playerBox.top,playerBox.right - playerBox.left,playerBox.bottom - playerBox.top)
+        }
+      
 
         //termite    
         termiteDraw(ctx,x,y)
@@ -161,6 +171,18 @@ function setup() {
             x += 40;
         }
 
+        //colider
+        playerBox.left = 5500/10
+        playerBox.right = 6550/10
+        playerBox.top = 6000/10
+        playerBox.bottom = 8020/10
+
+        if(space){
+            playerBox.top = 3000/10
+            playerBox.bottom = 6020/10
+        }
+
+
         //termite        
         termiteUpdatePos(x,y)
 
@@ -197,7 +219,7 @@ function setup() {
         }
 
         public UpdatePos(screenX:number,screenY:number): boolean{
-            if(this.x > playerX){
+            if(this.x > playerBox.right*2 || this.y > playerBox.bottom*2){
                 this.x -= randomIntFromInterval(speed-2,speed+2)
                 this.y += randomIntFromInterval(-1,1)
             }            
