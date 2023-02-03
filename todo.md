@@ -1,5 +1,5 @@
-Jump bg
+Particles
+Collision
 Double jump
 Fall down
-
 

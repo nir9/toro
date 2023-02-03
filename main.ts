@@ -1,3 +1,29 @@
+var particlesTimer = 0;
+
+interface Particle {
+    x: number;
+    y: number;
+    rnd: number;
+}
+
+let particles: Particle[] = [];
+
+function setupParticles(canvas: HTMLCanvasElement) {
+    for (let i = 0; i < 15; i++) {
+        particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, rnd: Math.random() });
+    }
+}
+
+function handleParticles(ctx: CanvasRenderingContext2D) {
+    for (const particle of particles) {
+        ctx.beginPath();
+        ctx.arc(particle.x + Math.floor(particlesTimer / 3), particle.y, 5, 0, 2 * Math.PI);
+        ctx.fill();
+    }
+
+    particlesTimer ++;
+}
+
 function curveValue(value: number, middle: number) {
     if (value > middle) {
         return middle - (value - middle);
@@ -16,12 +42,19 @@ function isWalkRightEvent(e: KeyboardEvent) {
 
 function setup() {
     let canvas = <HTMLCanvasElement>document.getElementById("game");
-        canvas.height = window.innerHeight;
-        canvas.width = window.innerWidth;
+
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+    setupParticles(canvas);
 
     window.addEventListener("resize", () => {
         canvas.height = window.innerHeight;
         canvas.width = window.innerWidth;
+        if (ctx === null) return;
+        ctx.fillStyle ="#666";
+        
+        setupParticles(canvas);
+
     });
 
 
@@ -60,7 +93,7 @@ function setup() {
             jumpingCounter = 1;
             space = false;
         }
-    }, 64);
+    }, 60);
 
     setInterval(() => {
         standingCounter++;
@@ -68,6 +101,14 @@ function setup() {
             standingCounter = 1;
         }
     }, 200);
+
+    function getJumpingDelta() {
+        if (!space) {
+            return 0;
+        }
+
+        return (curveValue(jumpingCounter, 5) * 20);
+    }
 
     function update() {
         
@@ -77,19 +118,21 @@ function setup() {
         ctx.fillStyle = "gray";
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.scale(0.5, 0.5);
 
-        ctx.drawImage(<CanvasImageSource>document.getElementById("bg-1"), 0, 0, 11246, 1714);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("roots-back"), x / 10, 0, 11246, 1714);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("roots-front"), x / 10, 0, 11246, 1714);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x, 200 + y, 11246, 1714);
-        ctx.scale(0.5, 0.5);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("above-back"), 0 + x, 0, 11246, 1714);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("above-front"), 0 + x + 8000, 0, 11246, 1714);
-        ctx.scale(2, 2);
+
+        ctx.drawImage(<CanvasImageSource>document.getElementById("bg-1"), 0, 0);
+
+        ctx.drawImage(<CanvasImageSource>document.getElementById("roots-back"), x / 5, 0);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("roots-front"), x / 5, 0);
+
+        ctx.drawImage(<CanvasImageSource>document.getElementById("above-back"), 0 + x, -100);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("above-front"), 0 + x + 2000, -100);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x, 100 + y);
+        
+        ctx.drawImage(<CanvasImageSource>document.getElementById("platform-1"), 1000 + x, 450 );
+        handleParticles(ctx);
 
        
-        ctx.scale(2, 2);
         ctx.scale(0.1, 0.1);
 
         let xMove = 5000;
@@ -101,12 +144,11 @@ function setup() {
         }
         
         if (space) {
-            ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), xMove, 6000 - (curveValue(jumpingCounter, 5) * 300));
+            ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), xMove, 6000 - getJumpingDelta() * 20);
         }
+
         else if (moveRight || moveLeft) {
-
             ctx.drawImage(<CanvasImageSource>document.getElementById("running" + runningCounter), xMove, 6000);
-
         }
        
         else if(!death){
@@ -122,14 +164,15 @@ function setup() {
         }
 
         ctx.scale(10, 10);
+
         
         //colider
         if(debugMod){
             ctx.fillStyle = "green";
             ctx.strokeRect(playerBox.left,playerBox.top,playerBox.right - playerBox.left,playerBox.bottom - playerBox.top)
         }
-      
 
+        
         //termite    
         termiteDraw(ctx,x,y)
     }
@@ -164,11 +207,11 @@ function setup() {
     function updatePos() {
         
         if (moveRight) {
-            x -= 40;
+            x -= 20;
         }
 
         if (moveLeft) {
-            x += 40;
+            x += 20;
         }
 
         //colider
