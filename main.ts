@@ -157,6 +157,7 @@ function setup() {
     let moveRight = false;
     let moveLeft = false;
     let flyDown = false;
+    let flyUp = false;
     let attack = false;
     let space = false;
     let doubleJump = false;
@@ -237,6 +238,7 @@ function setup() {
 
         // ctx.drawImage(<CanvasImageSource>document.getElementById("above-back"), 0 + x, -100);
         // ctx.drawImage(<CanvasImageSource>document.getElementById("above-front"), 0 + x + 2000, -100);
+        // TODO: a little bit of a roof
         ctx.drawImage(<CanvasImageSource>document.getElementById("branch-1"), 0 + x + 2200 + 50, 200 + y);
 
         ctx.drawImage(<CanvasImageSource>document.getElementById("little-tel"), 0 + x + 1200, 1000 + y);
@@ -247,20 +249,27 @@ function setup() {
         ctx.drawImage(<CanvasImageSource>document.getElementById("ne-curve-1"), x - 300, y);
         ctx.drawImage(<CanvasImageSource>document.getElementById("we-s-curve-1"), x + 2300, y);
         ctx.drawImage(<CanvasImageSource>document.getElementById("flipped-cube"), x + 3050, y + 850);
+        // todo: fine tun
         drawBlock(ctx, x - 100, 500 + y + 300, 500); 
         drawBlock(ctx, x - 100, 500 + y + 400, 2700, 270); 
 
         // block in the end of the level
-        drawBlock(ctx, x + 3240, y, 2700, 30000);
+        drawBlock(ctx, x + 3240, y, 2700, 1500);
 
         ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x + 200 + 100, 580 + y);
         ctx.drawImage(<CanvasImageSource>document.getElementById("edge-1"), 0 + x + 200 + 100 + 2200, 827 + y);
         ctx.drawImage(<CanvasImageSource>document.getElementById("west-curve-1"), 0 + x + 200 + 100 + 200, 1570 + y);
 
-        ctx.drawImage(<CanvasImageSource>document.getElementById("valley-1"), 0 + x + 400 + 1800, 2400 + y);
-        // ctx.drawImage(<CanvasImageSource>document.getElementById("hill-1"), 0 + x,  y);
         ctx.drawImage(<CanvasImageSource>document.getElementById("roof-1"), 0 + x + 1200 , 1350 + 500 + 100 + y);
         ctx.drawImage(<CanvasImageSource>document.getElementById("hill-1"), 0 + x + 1200 , 1850 + 600 + y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("valley-1"), 0 + x + 400 + 1850, 2390 + y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x + 400 + 1850 + 700, 2265 + y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("branch-1"), 0 + x + 400+ 1850 + 700 + 1000, 2000 + y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("long-cube-1"), 0 + x + 400+ 1850 + 700 + 2500, 2400 + y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("long-cube-1"), 0 + x + 400+ 1850 + 700 + 2500 + 300, 2400 + y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("long-cube-1"), 0 + x + 400+ 1850 + 700 + 2500 + 600, 2400 + y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("hill-1"), 0 + x + 400 + 1850 + 700 + 2500 + 600 + 300, 2300 + y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("big-cube-1"), 0 + x + 400 + 1850 + 700 + 2500 + 600 + 300 + 870, 2040 + y);
        
         for (let i = 0; i < platforms.length; i++) {
             drawPlatform(ctx, platforms[i]);
@@ -412,6 +421,7 @@ function setup() {
         }
 
         flyDown = false;
+        flyUp = false;
 
         if (x < -1550 && y > -550) {
             flyDown = true;
@@ -425,8 +435,16 @@ function setup() {
             flyDown = true;
         }
 
+        if (x < -550 && y > -1900 && y < -1700) {
+            flyUp = true;
+        }
+
         if (flyDown) {
             y -= 20;
+        }
+
+        if (flyUp) {
+            y += 20;
         }
 
         //colider
