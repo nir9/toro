@@ -63,9 +63,7 @@ function drawPlatform(ctx: CanvasRenderingContext2D, platform: GameObject) {
     platform.y1 += y;
     platform.y2 += y;
 
-    if (!platform.shouldNotDraw) {
-        ctx.drawImage(<CanvasImageSource>platform.elm, platform.x1, platform.y1);
-    }
+    ctx.drawImage(<CanvasImageSource>platform.elm, platform.x1, platform.y1);
 
     /*
      * The reason I added the collisionOccurring flag is that the collision is for each object and playerY is global, so if part of the collisions fail and part succeed
@@ -157,6 +155,8 @@ function areObjectsColliding(ctx: any, obj1: GameObject, obj2: GameObject): bool
 
 function setupPlatforms(): GameObject[] {
 
+    const platX = 50;
+    const platY = 1700;
     const platElm = <CanvasImageSource>document.getElementById("platform-1");
     const plat1: GameObject = { x1: platX, y1: platY, x2: (platX + <number>platElm.width), y2: (platY + <number>platElm.height), elm: platElm };
 
@@ -759,7 +759,7 @@ function setup() {
 
     function playerDeath() {
         death = true;
-        document.getElementById("game-over").style.display = "block";
+        (<any>document.getElementById("game-over")).style.display = "block";
     }
 }
 
