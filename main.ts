@@ -121,25 +121,20 @@ function areObjectsColliding(obj1: GameObject, obj2: GameObject): boolean {
 }
 
 function setupPlatforms(): GameObject[] {
-    const doorX = 1000;
-    const doorY = 250;
-    const doorElm = <CanvasImageSource>document.getElementById("door-1");
-    const door: GameObject = { x1: doorX, y1: doorY, x2: (doorX + <number>doorElm.width), y2: (doorY + <number>doorElm.height), elm: doorElm };
-
-    const platX = 1500;
-    const platY = 300;
+    const platX = 100;
+    const platY = 1600;
     const platElm = <CanvasImageSource>document.getElementById("platform-1");
     const plat1: GameObject = { x1: platX, y1: platY, x2: (platX + <number>platElm.width), y2: (platY + <number>platElm.height), elm: platElm };
 
-    const plat2X = 2000;
-    const plat2Y = 300;
+    const plat2X = -50;
+    const plat2Y = 1900;
     const plat2: GameObject = { x1: plat2X, y1: plat2Y, x2: (plat2X + <number>platElm.width), y2: (plat2Y + <number>platElm.height), elm: platElm };
 
-    const plat3X = 2700;
-    const plat3Y = 300;
+    const plat3X = 400;
+    const plat3Y = 2300;
     const plat3: GameObject = { x1: plat3X, y1: plat3Y, x2: (plat3X + <number>platElm.width), y2: (plat3Y + <number>platElm.height), elm: platElm };
 
-    return [door, plat1, /* plat2, plat3 */];
+    return [plat1, plat2, plat3];
 }
 
 
@@ -240,7 +235,7 @@ function setup() {
         ctx.drawImage(<CanvasImageSource>document.getElementById("little-tel"), 0 + x + 1200, 1000 + y);
 
         // Slope to the 3rd floor
-        ctx.drawImage(<CanvasImageSource>document.getElementById("sw-curve-1"), x - 400, 100 + y + 950 + 200);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("sw-curve-1"), x - 600, 100 + y + 950 + 200);
 
         ctx.drawImage(<CanvasImageSource>document.getElementById("ne-curve-1"), x - 300, y);
         ctx.drawImage(<CanvasImageSource>document.getElementById("we-s-curve-1"), x + 2300, y);
@@ -254,13 +249,13 @@ function setup() {
 
         ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x + 200 + 100, 580 + y);
         ctx.drawImage(<CanvasImageSource>document.getElementById("edge-1"), 0 + x + 200 + 100 + 2200, 827 + y);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("west-curve-1"), 0 + x + 200 + 100 + 200, 1550 + y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("west-curve-1"), 0 + x + 200 + 100 + 200, 1570 + y);
+
+        ctx.drawImage(<CanvasImageSource>document.getElementById("valley-1"), 0 + x + 400, 2450 + y);
         
         for (let i = 0; i < platforms.length; i++) {
-            drawPlatform(ctx, platforms[i], i === 0);
+            drawPlatform(ctx, platforms[i]);
         }
-
-        // ctx.drawImage(<CanvasImageSource>document.getElementById("small-cube-1"), 500 + x, 450 );
 
         handleParticles(ctx);
 
