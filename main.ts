@@ -177,7 +177,7 @@ function setup() {
     let attack = false;
     let space = false;
     let doubleJump = false;
-    let debugMod = true;
+    let debugMod = false;
 
     if (ctx === null) {
         return;
