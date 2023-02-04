@@ -424,9 +424,8 @@ function setup() {
         }
 
 
-        // termite     
-        // todo: temporary
-        // termiteUpdatePos(x,y)
+        // termite             
+        termiteUpdatePos(x,y)
 
         //map Objects
         for (let i = 0; i < mapObjects.length; i++) {
@@ -453,7 +452,8 @@ function setup() {
     }
 
     /////////// termits
-    const speed = 8
+    let speed = 0//speed and termits durction
+    //
     //const playerX = 1190
     const frameCountToClimp = 500
     const numTermite = 400
@@ -554,6 +554,7 @@ function setup() {
             this.frameCount++
             
             if(screenX+this.x > playerBox.x2 || screenX+this.x < playerBox.x1 || this.y > playerBox.y2 || this.y < playerBox.y1){
+                
                 this.x -= randomIntFromInterval(speed-2,speed+2)
                 this.y += randomIntFromInterval(-1,1)
             }            
@@ -642,7 +643,7 @@ function setup() {
 
     let termites:Termite[] = []   
 
-    //spawnLine(5000/2,1600/2,1400/2,numTermite)
+    spawnLine(5000/2,1600/2,1400/2,numTermite)
     //spawnInCircle(5000/2,1600/2,100,numTermite)
     //spawnCircle(5000/2,1600/2,100,numTermite)
     //spawnRectangle(5000/2,1600/2,100,numTermite)
