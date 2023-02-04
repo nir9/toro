@@ -1,5 +1,6 @@
 let x = 1;
 let y = 0;
+let space = false;
 const defaultPlayerY = 640;
 let playerY = defaultPlayerY;
 var particlesTimer = 0;
@@ -9,6 +10,7 @@ let xMove = 900;
 let walkingSound: boolean = false;
 var walkingAudio = new Audio("assets/music/walking.ogg");
 var attackingAudio = new Audio("assets/music/Attack.ogg");
+let collisionOccurring: boolean = false;
 
 function getFirstBranchX() {
    return x + 2200 + 50;
@@ -55,30 +57,34 @@ function handleParticles(ctx: CanvasRenderingContext2D) {
     particlesTimer++;
 }
 
-function drawPlatform(ctx: CanvasRenderingContext2D, platform: GameObject, clearAfterCollision: boolean = false) {
+function drawPlatform(ctx: CanvasRenderingContext2D, platform: GameObject) {
     platform.x1 += x;
     platform.x2 += x;
+    platform.y1 += y;
+    platform.y2 += y;
 
     if (!platform.shouldNotDraw) {
-        ctx.drawImage(<CanvasImageSource>platform.elm, platform.x1, platform.y1 + y);
+        ctx.drawImage(<CanvasImageSource>platform.elm, platform.x1, platform.y1);
     }
 
-    if (areObjectsColliding(platform, playerBox)) {
-        
-        if (clearAfterCollision) {
-            
-            platform.shouldNotDraw = true;
-        } else {
-            console.log("b "+platform.x1)            
-            playerY = platform.y1-150;
-        }
+    /*
+     * The reason I added the collisionOccurring flag is that the collision is for each object and playerY is global, so if part of the collisions fail and part succeed
+     * playerY will not be reliable if the flag would not be tracked
+     */
+
+    if (areObjectsColliding(ctx, platform, playerBox)) {
+        playerY = platform.y1 - 150;
+        collisionOccurring = true;
     } else {
-        if (!clearAfterCollision) {
+        if (!collisionOccurring) {
+            playerY = defaultPlayerY;
         }
     }
 
     platform.x1 -= x;
     platform.x2 -= x;
+    platform.y1 -= y;
+    platform.y2 -= y;
 }
 
 function curveValue(value: number, middle: number) {
@@ -108,32 +114,44 @@ interface GameObject {
     y2: number;
 
     elm?: CanvasImageSource;
-    shouldNotDraw?: boolean;
 }
 
-function areObjectsColliding(obj1: GameObject, obj2: GameObject): boolean {
-    if (obj2.x1 > obj1.x1 && obj2.x1 < obj1.x2) {
+function strokeStuff(ctx: any, obj1: any, obj2: any, ok: boolean) {
+    const saved = ctx.strokeStyle;
+    ctx.strokeStyle = ok ? "green" : "red";
+    ctx.strokeRect(obj1.x1, obj1.y1, obj1.x2 - obj1.x1, obj1.y2 - obj1.y1)
+    ctx.strokeRect(obj2.x1, obj2.y1, obj2.x2 - obj2.x1, obj2.y2 - obj2.y1)
+    ctx.strokeStyle = saved;
+}
 
-        if ((obj2.y1 > obj1.y1 && obj2.y1 < obj1.y2)) {
+function areObjectsColliding(ctx: any, obj1: GameObject, obj2: GameObject): boolean {
+    if (obj2.x1 >= obj1.x1 && obj2.x1 <= obj1.x2) {
+
+        if ((obj2.y1 >= obj1.y1 && obj2.y1 <= obj1.y2)) {
+            strokeStuff(ctx, obj1, obj2, true);
             return true;
         }
 
-        if (obj2.y2 > obj1.y1 && obj2.y1 < obj1.y1) {
+        if (obj2.y2 >= obj1.y1 && obj2.y1 <= obj1.y1) {
+            strokeStuff(ctx, obj1, obj2, true);
             return true;
         }
     }
 
-    if (obj1.x1 > obj2.x1 && obj1.x1 < obj2.x2) {
+    if (obj1.x1 >= obj2.x1 && obj1.x1 <= obj2.x2) {
 
-        if ((obj1.y1 > obj2.y1 && obj1.y1 < obj2.y2)) {
+        if ((obj1.y1 >= obj2.y1 && obj1.y1 <= obj2.y2)) {
+            strokeStuff(ctx, obj1, obj2, true);
             return true;
         }
 
-        if (obj1.y2 > obj2.y1 && obj1.y1 < obj2.y1) {
+        if (obj1.y2 >= obj2.y1 && obj1.y1 <= obj2.y1) {
+            strokeStuff(ctx, obj1, obj2, true);
             return true;
         }
     }
 
+    strokeStuff(ctx, obj1, obj2, false);
     return false;
 }
 
@@ -151,11 +169,22 @@ function setupPlatforms(): GameObject[] {
     const plat3Y = 2500;
     const plat3: GameObject = { x1: plat3X, y1: plat3Y, x2: (plat3X + <number>platElm.width), y2: (plat3Y + <number>platElm.height), elm: platElm };
 
-    const plat4X = 1000;
-    const plat4Y = 3000;
-    const plat4: GameObject = { x1: plat4X, y1: plat4Y, x2: (plat4X + <number>platElm.width), y2: (plat4Y + <number>platElm.height), elm: platElm };
+    const plat4X = 2200 + x + 400+ 1850 + 700 + 2500;
+    const plat4Y = 2400 + y;
+    const plat4Elm = <CanvasImageSource>document.getElementById("long-cube-1");
+    const plat4: GameObject = { x1: plat4X, y1: plat4Y, x2: (plat4X + <number>plat4Elm.width), y2: (plat4Y + <number>plat4Elm.height), elm: plat4Elm };
 
-    return [plat1, plat2, plat3, plat4];
+    const plat5X = 2200 + x + 400+ 1850 + 700 + 2500 + 300;
+    const plat5Y = 2400 + y;
+    const plat5Elm = plat4Elm;
+    const plat5: GameObject = { x1: plat5X, y1: plat5Y, x2: (plat5X + <number>plat5Elm.width), y2: (plat5Y + <number>plat5Elm.height), elm: plat5Elm };
+
+    const plat6X = 2200 + x + 400+ 1850 + 700 + 2500 + 600;
+    const plat6Y = 2400 + y;
+    const plat6Elm = plat4Elm;
+    const plat6: GameObject = { x1: plat6X, y1: plat6Y, x2: (plat6X + <number>plat6Elm.width), y2: (plat6Y + <number>plat6Elm.height), elm: plat6Elm };
+
+    return [plat1, plat2, plat3, plat4, plat5, plat6];
 }
 
 function setup() {
@@ -172,7 +201,6 @@ function setup() {
     let flyDown = false;
     let flyUp = false;
     let attack = false;
-    let space = false;
     let doubleJump = false;
     let debugMod = true;
 
@@ -232,7 +260,7 @@ function setup() {
             return 0;
         }
 
-        return (curveValue(jumpingCounter, doubleJump ? 10 : 5) * 20);
+        return (curveValue(jumpingCounter, doubleJump ? 10 : 5) * 40);
     }
 
     function update() {
@@ -279,18 +307,17 @@ function setup() {
         ctx.drawImage(<CanvasImageSource>document.getElementById("hill-1"), 0 + x + 1200 , 1850 + 600 + y);
         ctx.drawImage(<CanvasImageSource>document.getElementById("valley-1"), 0 + x + 400 + 1850, 2390 + y);
         ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x + 400 + 1850 + 700, 2265 + y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x + 400 + 1850 + 700 + 2200, 2265 + y);
 
         if (secondBranchRemainingLife > 0) {
             const animationDelta = secondBranchRemainingLife !== 3 ? Math.random() * 10 : 0;
             ctx.drawImage(<CanvasImageSource>document.getElementById("branch-1"), getSecondBranchX(), 2000 + y + animationDelta);
         }
 
-        ctx.drawImage(<CanvasImageSource>document.getElementById("long-cube-1"), 0 + x + 400+ 1850 + 700 + 2500, 2400 + y);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("long-cube-1"), 0 + x + 400+ 1850 + 700 + 2500 + 300, 2400 + y);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("long-cube-1"), 0 + x + 400+ 1850 + 700 + 2500 + 600, 2400 + y);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("hill-1"), 0 + x + 400 + 1850 + 700 + 2500 + 600 + 300, 2300 + y);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("big-cube-1"), 0 + x + 400 + 1850 + 700 + 2500 + 600 + 300 + 870, 2040 + y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("hill-1"), 2200 + x + 400 + 1850 + 700 + 2500 + 600 + 300, 2300 + y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("big-cube-1"), 2200 + x + 300 + 1850 + 700 + 2500 + 600 + 300 + 870, 1870 + y);
        
+        collisionOccurring = false;
         for (let i = 0; i < platforms.length; i++) {
             drawPlatform(ctx, platforms[i]);
         }
@@ -317,7 +344,7 @@ function setup() {
             ctx.drawImage(<CanvasImageSource>document.getElementById("running" + runningCounter), xMove, playerY);
         }
        
-        else if (!death){
+        else if (!death) {
             ctx.drawImage(<CanvasImageSource>document.getElementById("standing" + standingCounter), xMove, playerY);
         }
 
@@ -327,7 +354,7 @@ function setup() {
             xMove -= 190;
         }
 
-        if (debugMod){
+        if (debugMod) {
             ctx.fillStyle = "green";
             ctx.strokeRect(playerBox.x1, playerBox.y1, playerBox.x2 - playerBox.x1, playerBox.y2 - playerBox.y1)
         }
@@ -360,6 +387,7 @@ function setup() {
                 if (!walkingSound) {
                     walkingSound = true;
                     walkingAudio.loop = false;
+                    walkingAudio.currentTime = 0;
                     walkingAudio.play();
                 }
             }
@@ -414,6 +442,9 @@ function setup() {
 
             }
 
+            else if (x < -(6300 + 2200)) {
+            }
+
             else {
                 //if (x > -2200 && y > -800) {
                     x -= 20;
@@ -439,11 +470,15 @@ function setup() {
             flyDown = true;
         }
 
-        if (x > 60 && y < -759 && y > -1850) {
+        if (x > 100 && y < -759 && y > -1850) {
             flyDown = true;
         }
 
         if (x < -550 && y > -1900 && y < -1700) {
+            flyUp = true;
+        }
+
+        if (x < -7850 && x > -8050) {
             flyUp = true;
         }
 
@@ -455,19 +490,10 @@ function setup() {
             y += 20;
         }
 
-        playerBox.x1 = 950
-        playerBox.x2 = 1050
-        playerBox.y1 = playerY
-        playerBox.y2 = playerY + 200
-
-        if(space){
-            playerBox.y1 = 300
-            playerBox.y2 = 602
-        }
-        if(doubleJump){
-            playerBox.y1 = 100
-            playerBox.y2 = 402
-        }
+        playerBox.x1 = xMove + 50
+        playerBox.x2 = xMove + 150
+        playerBox.y1 = playerY - getJumpingDelta() * 2
+        playerBox.y2 = playerBox.y1 + 200
 
         termiteUpdatePos(x,y)
 
@@ -484,7 +510,7 @@ function setup() {
         return Math.floor(Math.random() * (max - min + 1) + min)
     }
 
-    let speed = 0;
+    let speed = 1;
     const frameCountToClimp = 500
     const numTermite = 400
     let counterClimber = 0
@@ -730,7 +756,7 @@ function setup() {
 
     function playerDeath() {
         death = true;
-        alert("Toro has died :(");
+        document.getElementById("game-over").style.display = "block";
     }
 }
 

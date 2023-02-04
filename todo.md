@@ -1,1 +1,1 @@
-Blinking
+Debug collision
