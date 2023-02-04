@@ -1,6 +1,17 @@
 <html>
     <head>
         <style>
+            #game-over {
+                z-index: 10000;
+                position: fixed;
+                top: 250px;
+                left: 500px;
+                padding: 100px;
+                font-size: 70px;
+                font-family: Arial;
+                display: none;
+                background-color: white;
+            }
             body {
                 margin: 0;
                 padding: 0;
@@ -10,7 +21,7 @@
             canvas {
                 width: 1280px;
                 height: 720px;
-                padding: 150px;
+                padding: 50px;
             }
             /*.mainMenu{
                 position: fixed;
@@ -107,9 +118,15 @@
         <img style="display: none;" src="assets/Roof-With-Curve.png" id="roof-1">
 
         <img style="display: none;" src="assets/Untitled-Artwork-10.png" id="termit-10">
-
+        <img style="display: none;" src="assets/Long-Cube-1.png" id="long-cube-1">
+        <img style="display: none;" src="assets/big-cube.png" id="big-cube-1">
 
         <canvas id="game" width="500" height="500"></canvas>
+        <div id="game-over">
+            <h1 style="color: red; font-size: 72px;">
+                Toro has died :(
+            </h1>
+        </div>
         <script src="main.js"></script>
        
     </body>
