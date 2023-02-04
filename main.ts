@@ -1,5 +1,6 @@
 let x = 1;
 let y = 0;
+let antsSpeed = 0;
 let space = false;
 const defaultPlayerY = 640;
 let playerY = defaultPlayerY;
@@ -481,6 +482,10 @@ function setup() {
             flyUp = true;
         }
 
+        if (y < -1500) {
+            antsSpeed = -2;
+        }
+
         if (x < -7850 && x > -8050) {
             flyUp = true;
         }
@@ -513,7 +518,6 @@ function setup() {
         return Math.floor(Math.random() * (max - min + 1) + min)
     }
 
-    let speed = 1;
     const frameCountToClimp = 500
     const numTermite = 400
     let counterClimber = 0
@@ -614,7 +618,7 @@ function setup() {
             
             if(screenX+this.x > playerBox.x2 || screenX+this.x < playerBox.x1 || this.y > playerBox.y2 || this.y < playerBox.y1){
                 
-                this.x -= randomIntFromInterval(speed-2,speed+2)
+                this.x -= randomIntFromInterval(antsSpeed-2,antsSpeed+2)
                 this.y += randomIntFromInterval(-1,1)
             }            
             else{        
@@ -692,7 +696,7 @@ function setup() {
         public UpdatePos(screenX:number,screenY:number): void{
             this.frameCount++
             this.x -= randomIntFromInterval(-2,+2)
-            this.y += randomIntFromInterval(speed-1,speed+1)
+            this.y += randomIntFromInterval(antsSpeed-1,antsSpeed+1)
                 
             if(this.frameCount > 1000)
                 this.context?.setStage(undefined)//destroy            
