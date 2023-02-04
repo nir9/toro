@@ -16,23 +16,68 @@ body{
     display: block;
     margin-left: auto;
     margin-right: auto;
+    margin-top: 50px;
+    
 }
 .play_btn{
     width: 90%;
     margin-left: 5%;
     color: white;
     font-size: xxx-large;
-    text-align: center;
-    background: rgba(169, 169, 169, 0.37);
+    text-align: center;    
  }
  .play_btn:hover{
-    background-color: lightgray;
+    filter: sepia(100%) saturate(400%);      
 }
 
 .authors{
     color: white;
-    background-color: rgba(169, 169, 169, 0.438);
+   
     font-size: medium;
     margin-left: 5%;
     width: fit-content;
+    width: 90%;
+    margin-left: 5%;
+    text-align: center;
+    margin-top: 40px;
+    font-family: Arial, Helvetica, sans-serif;
+    
+
 }
+
+.dot {
+    height: 10px;
+    width: 10px;
+    background-color: #ffffff3a;
+    border-radius: 50%;
+    display: block;
+    position: fixed;       
+    animation-name: dot;
+    animation-duration: 20s;
+    animation-iteration-count: infinite;
+    animation-timing-function:linear;
+    left:1280px;
+    
+}
+
+.termit{   
+    position: fixed; 
+    top:-100px;
+    left: 20px;
+    animation-delay: 20s;
+    animation-name: termit;
+    animation-duration: 4s; 
+    animation-iteration-count: infinite;
+    animation-timing-function:linear;  
+}
+@keyframes dot {
+    from {left:1280px;}
+    to {left: -10;}
+  }
+
+@keyframes termit {
+    from {top:-10px;}
+    to {top: 700px;}
+  }
+
+
