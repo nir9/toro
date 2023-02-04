@@ -14,9 +14,9 @@ interface Particle {
 
 let particles: Particle[] = [];
 
-function drawBlock(ctx: any, x: number, y: number, width: number) {
+function drawBlock(ctx: any, x: number, y: number, width: number, height: number = 500) {
     ctx.fillStyle ="#14171d";
-    ctx.fillRect(x, y, width, 500);
+    ctx.fillRect(x, y, width, height);
     ctx.fillStyle = "#666";
 }
 
@@ -70,6 +70,10 @@ function curveValue(value: number, middle: number) {
     }
 
     return value;
+}
+
+function isFlyDownEvent(e: KeyboardEvent) {
+    return e.code === "ArrowDown" || e.code === "KeyS";
 }
 
 function isWalkLeftEvent(e: KeyboardEvent) {
@@ -135,7 +139,7 @@ function setupPlatforms(): GameObject[] {
     const plat3Y = 300;
     const plat3: GameObject = { x1: plat3X, y1: plat3Y, x2: (plat3X + <number>platElm.width), y2: (plat3Y + <number>platElm.height), elm: platElm };
 
-    return [door /*, plat1, plat2, plat3 */];
+    return [door, plat1, /* plat2, plat3 */];
 }
 
 
@@ -150,6 +154,7 @@ function setup() {
     let isFacingRight = true;
     let moveRight = false;
     let moveLeft = false;
+    let flyDown = false;
     let attack = false;
     let space = false;
     let doubleJump = false;
@@ -230,14 +235,26 @@ function setup() {
 
         // ctx.drawImage(<CanvasImageSource>document.getElementById("above-back"), 0 + x, -100);
         // ctx.drawImage(<CanvasImageSource>document.getElementById("above-front"), 0 + x + 2000, -100);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("branch-1"), 0 + x + 2200+ 50, 200 + y);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("sw-curve-1"), 2100 + x, 100 + y + 750);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("branch-1"), 0 + x + 2200 + 50, 200 + y);
+
+        ctx.drawImage(<CanvasImageSource>document.getElementById("little-tel"), 0 + x + 1200, 1000 + y);
+
+        // Slope to the 3rd floor
+        ctx.drawImage(<CanvasImageSource>document.getElementById("sw-curve-1"), x - 400, 100 + y + 950 + 200);
+
         ctx.drawImage(<CanvasImageSource>document.getElementById("ne-curve-1"), x - 300, y);
         ctx.drawImage(<CanvasImageSource>document.getElementById("we-s-curve-1"), x + 2300, y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("flipped-cube"), x + 3050, y + 850);
         drawBlock(ctx, x - 100, 500 + y + 300, 500); 
-        drawBlock(ctx, x - 100, 500 + y + 400, 2700); 
+        drawBlock(ctx, x - 100, 500 + y + 400, 2700, 270); 
+
+
+        // block in the end of the level
+        drawBlock(ctx, x + 3240,  y, 2700, 30000); 
+
         ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x + 200 + 100, 580 + y);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("edge-1"), 0 + x + 200 + 100 + 2200, 780 + y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("edge-1"), 0 + x + 200 + 100 + 2200, 827 + y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("west-curve-1"), 0 + x + 200 + 100 + 200, 1550 + y);
         
         for (let i = 0; i < platforms.length; i++) {
             drawPlatform(ctx, platforms[i], i === 0);
@@ -247,7 +264,7 @@ function setup() {
 
         handleParticles(ctx);
 
-        let xMove = 500;
+        let xMove = 900;
 
         if (!isFacingRight) {
             ctx.scale(-1, 1);
@@ -260,7 +277,6 @@ function setup() {
         }
 
         else if (attack) {
-            debugger;
             ctx.drawImage(<CanvasImageSource>document.getElementById("attack" + attackCounter), xMove, playerY);
         }
 
@@ -268,7 +284,7 @@ function setup() {
             ctx.drawImage(<CanvasImageSource>document.getElementById("running" + runningCounter), xMove, playerY);
         }
        
-        else if(!death){
+        else if (!death){
             ctx.drawImage(<CanvasImageSource>document.getElementById("standing" + standingCounter), xMove, playerY);
         }
 
@@ -307,6 +323,7 @@ function setup() {
         if (!space) {
             moveRight = isWalkRightEvent(ev);
             moveLeft = isWalkLeftEvent(ev);
+            flyDown = isFlyDownEvent(ev);
             attack = ev.code === "KeyF";
 
             if (moveRight || moveLeft) {
@@ -331,38 +348,47 @@ function setup() {
         if (isWalkLeftEvent(ev)) {
             moveLeft = false;
         }
+
+        if (isFlyDownEvent(ev)) {
+            flyDown = false;
+        }
     });
 
     function updatePos() {
-        
         if (moveRight) {
-            if (x < -1650) {
+            /*if (x < -1650) {
 
-            } else {
+            } else { */
 
-                x -= 20;
-                if (x < -1700 && x > -2800) {
+                if (x > -2200) {
+                    x -= 20;
+                }
+                /* if (x < -1700 && x > -2200) {
                     y -= 50;
 
-                }
-            }
+                } */
+            // }
         }
 
         if (moveLeft) {
-            if (x > 0) {
+            if ((x > 400 && y > -800) || x > 1000) {
                 // alert("limit");
             } else {
                 x += 20;
 
-                if (x < -1700 && x > -2800) {
+                /* if (x < -1700 && x > -2200) {
                     y += 50;
-                }
+                } */
             }
         }
 
+        if (flyDown) {
+            y -= 20;
+        }
+
         //colider
-        playerBox.x1 = 550
-        playerBox.x2 = 655
+        playerBox.x1 = 950
+        playerBox.x2 = 1050
         playerBox.y1 = playerY
         playerBox.y2 = playerY + 200
 
