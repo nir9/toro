@@ -1,6 +1,6 @@
 let x = 1;
 let y = 0;
-const defaultPlayerY = 540;
+const defaultPlayerY = 640;
 let playerY = defaultPlayerY;
 var particlesTimer = 0;
 var drawDoor = true;
@@ -13,6 +13,12 @@ interface Particle {
 }
 
 let particles: Particle[] = [];
+
+function drawBlock(ctx: any, x: number, y: number, width: number, height: number = 500) {
+    ctx.fillStyle ="#14171d";
+    ctx.fillRect(x, y, width, height);
+    ctx.fillStyle = "#666";
+}
 
 function setupParticles(canvas: HTMLCanvasElement) {
     for (let i = 0; i < 100; i++) {
@@ -39,18 +45,22 @@ function drawPlatform(ctx: CanvasRenderingContext2D, platform: GameObject, clear
     platform.x2 += x;
 
     if (!platform.shouldNotDraw) {
-        ctx.drawImage(<CanvasImageSource>platform.elm, platform.x1, platform.y1);
+        ctx.drawImage(<CanvasImageSource>platform.elm, platform.x1, platform.y1 + y);
     }
 
     if (areObjectsColliding(platform, playerBox)) {
+        
         if (clearAfterCollision) {
+            
             platform.shouldNotDraw = true;
         } else {
+            console.log("b "+platform.x1)            
             playerY = platform.y1-150;
         }
     } else {
         if (!clearAfterCollision) {
-            playerY = defaultPlayerY;
+            //console.log("a"+platform.x1)
+            //playerY = defaultPlayerY;
         }
     }
 
@@ -64,6 +74,10 @@ function curveValue(value: number, middle: number) {
     }
 
     return value;
+}
+
+function isFlyDownEvent(e: KeyboardEvent) {
+    return e.code === "ArrowDown" || e.code === "KeyS";
 }
 
 function isWalkLeftEvent(e: KeyboardEvent) {
@@ -111,27 +125,20 @@ function areObjectsColliding(obj1: GameObject, obj2: GameObject): boolean {
 }
 
 function setupPlatforms(): GameObject[] {
-    const doorX = 1000;
-    const doorY = 250;
-    const doorElm = <CanvasImageSource>document.getElementById("door-1");
-    const door: GameObject = { x1: doorX, y1: doorY, x2: (doorX + <number>doorElm.width), y2: (doorY + <number>doorElm.height), elm: doorElm };
-
-    const platX = 1500;
+    const platX = 2000;
     const platY = 300;
     const platElm = <CanvasImageSource>document.getElementById("platform-1");
     const plat1: GameObject = { x1: platX, y1: platY, x2: (platX + <number>platElm.width), y2: (platY + <number>platElm.height), elm: platElm };
 
-    const plat2X = 2000;
+    const plat2X = 2500;
     const plat2Y = 300;
     const plat2: GameObject = { x1: plat2X, y1: plat2Y, x2: (plat2X + <number>platElm.width), y2: (plat2Y + <number>platElm.height), elm: platElm };
 
-    const plat3X = 2700;
+    const plat3X = 3200;
     const plat3Y = 300;
     const plat3: GameObject = { x1: plat3X, y1: plat3Y, x2: (plat3X + <number>platElm.width), y2: (plat3Y + <number>platElm.height), elm: platElm };
-
-    return [door, plat1, plat2, plat3];
+    return [plat1, plat2, plat3];
 }
-
 
 function setup() {
     let canvas = <HTMLCanvasElement>document.getElementById("game");
@@ -144,6 +151,8 @@ function setup() {
     let isFacingRight = true;
     let moveRight = false;
     let moveLeft = false;
+    let flyDown = false;
+    let attack = false;
     let space = false;
     let doubleJump = false;
     let debugMod = true;
@@ -156,6 +165,7 @@ function setup() {
 
     ctx.fillStyle ="#666";
     let runningCounter = 1;
+    let attackCounter = 1;
     let jumpingCounter = 1;
     let standingCounter = 1;
     let death = false;
@@ -166,6 +176,14 @@ function setup() {
             runningCounter = 1;
         }
     }, 132);
+
+    setInterval(() => {
+        attackCounter++;
+        if (attackCounter > 8) {
+            attackCounter = 1;
+            attack = false;
+        }
+    }, 60);
 
     setInterval(() => {
         jumpingCounter++;
@@ -209,25 +227,41 @@ function setup() {
 
 
         ctx.drawImage(<CanvasImageSource>document.getElementById("bg-1"), 0, 0);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("roots-back"), x / 10, y + 1000);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("roots-front"), x / 5, y + 1000);
 
-        ctx.drawImage(<CanvasImageSource>document.getElementById("roots-back"), x / 10, 0);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("roots-front"), x / 5, 0);
+        // ctx.drawImage(<CanvasImageSource>document.getElementById("above-back"), 0 + x, -100);
+        // ctx.drawImage(<CanvasImageSource>document.getElementById("above-front"), 0 + x + 2000, -100);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("branch-1"), 0 + x + 2200 + 50, 200 + y);
 
-        ctx.drawImage(<CanvasImageSource>document.getElementById("above-back"), 0 + x, -100);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("above-front"), 0 + x + 2000, -100);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x, 100 + y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("little-tel"), 0 + x + 1200, 1000 + y);
+
+        // Slope to the 3rd floor
+        ctx.drawImage(<CanvasImageSource>document.getElementById("sw-curve-1"), x - 400, 100 + y + 950 + 200);
+
+        ctx.drawImage(<CanvasImageSource>document.getElementById("ne-curve-1"), x - 300, y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("we-s-curve-1"), x + 2300, y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("flipped-cube"), x + 3050, y + 850);
+        drawBlock(ctx, x - 100, 500 + y + 300, 500); 
+        drawBlock(ctx, x - 100, 500 + y + 400, 2700, 270); 
+
+
+        // block in the end of the level
+        drawBlock(ctx, x + 3240,  y, 2700, 30000); 
+
+        ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x + 200 + 100, 580 + y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("edge-1"), 0 + x + 200 + 100 + 2200, 827 + y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("west-curve-1"), 0 + x + 200 + 100 + 200, 1550 + y);
         
         for (let i = 0; i < platforms.length; i++) {
-            drawPlatform(ctx, platforms[i], i === 0);
+            drawPlatform(ctx, platforms[i], false);//don't clear after colision
         }
 
         // ctx.drawImage(<CanvasImageSource>document.getElementById("small-cube-1"), 500 + x, 450 );
 
         handleParticles(ctx);
 
-       
-
-        let xMove = 500;
+        let xMove = 900;
 
         if (!isFacingRight) {
             ctx.scale(-1, 1);
@@ -239,16 +273,20 @@ function setup() {
             ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), xMove, playerY - getJumpingDelta() * 2);
         }
 
+        else if (attack) {
+            ctx.drawImage(<CanvasImageSource>document.getElementById("attack" + attackCounter), xMove, playerY);
+        }
+
         else if (moveRight || moveLeft) {
             ctx.drawImage(<CanvasImageSource>document.getElementById("running" + runningCounter), xMove, playerY);
         }
        
-        else if(!death){
+        else if (!death){
             ctx.drawImage(<CanvasImageSource>document.getElementById("standing" + standingCounter), xMove, playerY);
         }
 
         else {//death           
-            alert("death");
+            // alert("death");
         }
 
         if (!isFacingRight) {
@@ -264,10 +302,20 @@ function setup() {
         
         //termite    
         termiteDraw(ctx,x,y)
+
+        //map object
+        mapObjects.forEach((m)=>{
+            m.draw(ctx,x,y)
+            if(debugMod)
+                m.drawColider(ctx,x,y)
+        })
+
+        
     }
 
     window.addEventListener("keydown", (ev) => {
         let wasSpace = false;
+
         if (space) {
             wasSpace = true;
         }
@@ -281,6 +329,8 @@ function setup() {
         if (!space) {
             moveRight = isWalkRightEvent(ev);
             moveLeft = isWalkLeftEvent(ev);
+            flyDown = isFlyDownEvent(ev);
+            attack = ev.code === "KeyF";
 
             if (moveRight || moveLeft) {
                 isFacingRight = moveRight;
@@ -289,6 +339,10 @@ function setup() {
 
         if (space) {
             jumpingCounter = 1;
+        }
+
+        if (attack) {
+            attackCounter = 1;
         }
     });
 
@@ -300,24 +354,63 @@ function setup() {
         if (isWalkLeftEvent(ev)) {
             moveLeft = false;
         }
+
+        if (isFlyDownEvent(ev)) {
+            flyDown = false;
+        }
     });
 
     function updatePos() {
-        
         if (moveRight) {
-            x -= 20;
-            if (x < -1800) {
-                y -= 100;
-            }
+
+
+            const isColide = mapObjects.find((m)=>{
+                const result = m.isColide(x,y,playerBox)
+                if(result)
+                    m.playerHit()
+                return result                
+            })
+
+            if(!isColide){
+                x -= 20;
+
+            }                     
+
+
+            /*if (x < -1650) {
+
+            } else { */
+
+                if (x > -2200) {
+                    x -= 20;
+                }
+                /* if (x < -1700 && x > -2200) {
+                    y -= 50;
+
+                } */
+            // }
+
         }
 
         if (moveLeft) {
-            x += 20;
+            if ((x > 400 && y > -800) || x > 1000) {
+                // alert("limit");
+            } else {
+                x += 20;
+
+                /* if (x < -1700 && x > -2200) {
+                    y += 50;
+                } */
+            }
+        }
+
+        if (flyDown) {
+            y -= 20;
         }
 
         //colider
-        playerBox.x1 = 550
-        playerBox.x2 = 655
+        playerBox.x1 = 950
+        playerBox.x2 = 1050
         playerBox.y1 = playerY
         playerBox.y2 = playerY + 200
 
@@ -331,8 +424,19 @@ function setup() {
         }
 
 
-        // termite     
+        // termite             
         termiteUpdatePos(x,y)
+
+        //map Objects
+        for (let i = 0; i < mapObjects.length; i++) {
+            mapObjects[i].UpdatePos(x,y)
+            if(mapObjects[i].needDestroy){
+                console.log("destroy")
+                mapObjects.splice(i,1)
+                break
+            }
+            
+        }       
 
         update();
         requestAnimationFrame(updatePos);
@@ -348,7 +452,8 @@ function setup() {
     }
 
     /////////// termits
-    const speed = 8
+    let speed = 0//speed and termits durction
+    //
     //const playerX = 1190
     const frameCountToClimp = 500
     const numTermite = 400
@@ -437,14 +542,19 @@ function setup() {
             this.frameCount = 0          
         }
 
+        private frameImg():Number{            
+            return 10
+        }
+
         public draw(ctx: any,screenX:number,screenY:number): void {
-            ctx.drawImage(<CanvasImageSource>document.getElementById("termite") ,screenX+this.x, this.y)         
+            ctx.drawImage(<CanvasImageSource>document.getElementById("termit-"+this.frameImg()) ,screenX+this.x, this.y)         
         }
 
         public UpdatePos(screenX:number,screenY:number): void{
             this.frameCount++
             
             if(screenX+this.x > playerBox.x2 || screenX+this.x < playerBox.x1 || this.y > playerBox.y2 || this.y < playerBox.y1){
+                
                 this.x -= randomIntFromInterval(speed-2,speed+2)
                 this.y += randomIntFromInterval(-1,1)
             }            
@@ -482,7 +592,7 @@ function setup() {
         }
 
         public draw(ctx: any,screenX:number,screenY:number): void {
-            ctx.drawImage(<CanvasImageSource>document.getElementById("termite") ,this.x, this.y)         
+            ctx.drawImage(<CanvasImageSource>document.getElementById("termit-10") ,this.x, this.y)         
         }
 
         public UpdatePos(screenX:number,screenY:number): void{   
@@ -517,7 +627,7 @@ function setup() {
         }
 
         public draw(ctx: any,screenX:number,screenY:number): void {
-            ctx.drawImage(<CanvasImageSource>document.getElementById("termite") ,this.x, this.y)         
+            ctx.drawImage(<CanvasImageSource>document.getElementById("termit-10") ,this.x, this.y)         
         }
 
         public UpdatePos(screenX:number,screenY:number): void{
@@ -533,7 +643,7 @@ function setup() {
 
     let termites:Termite[] = []   
 
-    //spawnLine(5000/2,1600/2,1400/2,numTermite)
+    spawnLine(5000/2,1600/2,1400/2,numTermite)
     //spawnInCircle(5000/2,1600/2,100,numTermite)
     //spawnCircle(5000/2,1600/2,100,numTermite)
     //spawnRectangle(5000/2,1600/2,100,numTermite)
@@ -635,6 +745,105 @@ function setup() {
         death = true;          
         console.log("death")
     }
+
+    /////////// map object    
+
+
+
+
+    abstract class MapObject{
+        public x1: any
+        public x2:any
+        public y1:any
+        public y2:any
+
+        public needDestroy:boolean
+
+        constructor(x1: any,x2:any,y1:any,y2:any){
+            this.x1 = x1
+            this.x2 = x2
+            this.y1 = y1
+            this.y2 = y2
+            this.needDestroy = false
+        }
+        
+        public abstract draw(ctx: any,screenX:number,screenY:number): void 
+
+        public drawColider(ctx: any,screenX:number,screenY:number): void {
+
+            if(debugMod){
+                ctx.fillStyle = "green";
+                ctx.strokeRect(
+                    screenX+this.x1,
+                    screenY+this.y1,
+                    this.x2 - this.x1,
+                    this.y2 - this.y1)
+            }
+
+        }
+
+        public isColide(screenX:number,screenY:number,box:any):Boolean{
+
+            return screenX+this.x1 < box.x2            
+
+            //TODO imjplement box colider            
+        }
+
+        public playerHit():void{
+            this.onPlayerHit()
+        }
+
+        protected abstract onPlayerHit():void
+
+        public abstract UpdatePos(screenX:number,screenY:number): void
+
+    }     
+
+    class Door extends MapObject{
+        animationOn:boolean
+        constructor(x1: any,x2:any,y1:any,y2:any){
+            super(x1,x2,y1,y2)
+            this.animationOn = false;
+        }
+
+        public draw(ctx: any,screenX:number,screenY:number): void {        
+            ctx.drawImage(<CanvasImageSource>document.getElementById("door-1") ,screenX+this.x1, screenY+this.y1)                          
+            
+        }
+
+        public onPlayerHit():void{
+            this.animationOn = true
+        }
+        
+        public UpdatePos(screenX:number,screenY:number): void{
+            if(this.animationOn){
+                //console.log("UpdatePos")
+                this.y1++
+                this.y2++   
+
+                if(this.y1 > 800){                                       
+                    console.log("destroy dor ")                                                                                
+                    this.needDestroy = true
+                }
+                    
+            }
+                
+        }
+    }
+
+    function setupMapObject(): MapObject[] {       
+        const doorElm = <CanvasImageSource>document.getElementById("door-1")
+
+        const doorLeft = 1500;
+        const doorRight = (doorLeft + <number>doorElm.width);
+        const doorTop = 250
+        const doorBottom = (doorTop + <number>doorElm.height);
+
+        //return[new Door(doorLeft,doorRight,doorTop,doorBottom),/*doorTriger*/]
+        return []
+    }
+
+    let mapObjects = setupMapObject()
 }
 
 
