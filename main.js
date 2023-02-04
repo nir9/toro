@@ -1,8 +1,10 @@
 "use strict";
 let x = 1;
+let ending = false;
 let y = 0;
 let antsSpeed = 0;
 let space = false;
+let firstTime = true;
 const defaultPlayerY = 640;
 let playerY = defaultPlayerY;
 var particlesTimer = 0;
@@ -11,6 +13,7 @@ let playerBox = { y1: 0, x1: 0, x2: 0, y2: 0 };
 let xMove = 900;
 let walkingSound = false;
 var walkingAudio = new Audio("assets/music/walking.ogg");
+var soundtrackAudio = new Audio("assets/music/toro_menu.mp3");
 var attackingAudio = new Audio("assets/music/Attack.ogg");
 let collisionOccurring = false;
 function getFirstBranchX() {
@@ -162,11 +165,18 @@ function setup() {
     let attackCounter = 1;
     let jumpingCounter = 1;
     let standingCounter = 1;
+    let endingCounter = 1;
     let death = false;
     setInterval(() => {
         runningCounter++;
         if (runningCounter > 8) {
             runningCounter = 1;
+        }
+    }, 132);
+    setInterval(() => {
+        endingCounter++;
+        if (endingCounter > 10) {
+            endingCounter = 1;
         }
     }, 132);
     setInterval(() => {
@@ -198,7 +208,7 @@ function setup() {
         if (!space) {
             return 0;
         }
-        return (curveValue(jumpingCounter, doubleJump ? 10 : 5) * 40);
+        return (curveValue(jumpingCounter, doubleJump ? 10 : 5) * 20);
     }
     function update() {
         if (ctx === null) {
@@ -207,7 +217,12 @@ function setup() {
         ctx.fillStyle = "gray";
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(document.getElementById("bg-1"), 0, 0);
+        if (!ending) {
+            ctx.drawImage(document.getElementById("bg-1"), 0, 0);
+        }
+        else {
+            ctx.drawImage(document.getElementById("bgending"), 0, 0);
+        }
         ctx.drawImage(document.getElementById("roots-back"), x / 10, y + 1000);
         ctx.drawImage(document.getElementById("roots-front"), x / 5, y + 1000);
         // ctx.drawImage(<CanvasImageSource>document.getElementById("above-back"), 0 + x, -100);
@@ -255,6 +270,9 @@ function setup() {
         if (space) {
             ctx.drawImage(document.getElementById("jumping" + jumpingCounter), xMove, playerY - getJumpingDelta() * 2);
         }
+        else if (ending) {
+            ctx.drawImage(document.getElementById("endtoro" + endingCounter), xMove, playerY);
+        }
         else if (attack) {
             ctx.drawImage(document.getElementById("attack" + attackCounter), xMove, playerY);
         }
@@ -276,6 +294,11 @@ function setup() {
         termiteDraw(ctx, x, y);
     }
     window.addEventListener("keydown", (ev) => {
+        if (firstTime) {
+            soundtrackAudio.loop = true;
+            soundtrackAudio.play();
+            firstTime = false;
+        }
         let wasSpace = false;
         if (space) {
             wasSpace = true;
@@ -291,12 +314,10 @@ function setup() {
             attack = ev.code === "KeyF";
             if (moveRight || moveLeft) {
                 isFacingRight = moveRight;
-                if (!walkingSound) {
-                    walkingSound = true;
-                    walkingAudio.loop = false;
-                    walkingAudio.currentTime = 0;
-                    walkingAudio.play();
-                }
+                walkingSound = true;
+                walkingAudio.loop = false;
+                walkingAudio.currentTime = 0;
+                walkingAudio.play();
             }
         }
         if (space) {

@@ -1,7 +1,9 @@
 let x = 1;
+let ending = false;
 let y = 0;
 let antsSpeed = 0;
 let space = false;
+let firstTime = true;
 const defaultPlayerY = 640;
 let playerY = defaultPlayerY;
 var particlesTimer = 0;
@@ -10,6 +12,7 @@ let playerBox: GameObject = {y1:0, x1:0, x2:0, y2:0}
 let xMove = 900;
 let walkingSound: boolean = false;
 var walkingAudio = new Audio("assets/music/walking.ogg");
+var soundtrackAudio = new Audio("assets/music/toro_menu.mp3");
 var attackingAudio = new Audio("assets/music/Attack.ogg");
 let collisionOccurring: boolean = false;
 
@@ -191,6 +194,7 @@ function setupPlatforms(): GameObject[] {
 function setup() {
     let canvas = <HTMLCanvasElement>document.getElementById("game");
 
+
     canvas.height = 1080;
     canvas.width = 1920;
     setupParticles(canvas);
@@ -216,12 +220,20 @@ function setup() {
     let attackCounter = 1;
     let jumpingCounter = 1;
     let standingCounter = 1;
+    let endingCounter = 1;
     let death = false;
 
     setInterval(() => {
         runningCounter++;
         if (runningCounter > 8) {
             runningCounter = 1;
+        }
+    }, 132);
+
+    setInterval(() => {
+        endingCounter++;
+        if (endingCounter > 10) {
+            endingCounter = 1;
         }
     }, 132);
 
@@ -261,7 +273,7 @@ function setup() {
             return 0;
         }
 
-        return (curveValue(jumpingCounter, doubleJump ? 10 : 5) * 40);
+        return (curveValue(jumpingCounter, doubleJump ? 10 : 5) * 20);
     }
 
     function update() {
@@ -273,7 +285,12 @@ function setup() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        ctx.drawImage(<CanvasImageSource>document.getElementById("bg-1"), 0, 0);
+        if (!ending) {
+            ctx.drawImage(<CanvasImageSource>document.getElementById("bg-1"), 0, 0);
+        } else {
+            ctx.drawImage(<CanvasImageSource>document.getElementById("bgending"), 0, 0);
+        }
+
         ctx.drawImage(<CanvasImageSource>document.getElementById("roots-back"), x / 10, y + 1000);
         ctx.drawImage(<CanvasImageSource>document.getElementById("roots-front"), x / 5, y + 1000);
 
@@ -338,6 +355,10 @@ function setup() {
             ctx.drawImage(<CanvasImageSource>document.getElementById("jumping" + jumpingCounter), xMove, playerY - getJumpingDelta() * 2);
         }
 
+        else if (ending) {
+            ctx.drawImage(<CanvasImageSource>document.getElementById("endtoro" + endingCounter), xMove, playerY);
+        }
+
         else if (attack) {
             ctx.drawImage(<CanvasImageSource>document.getElementById("attack" + attackCounter), xMove, playerY);
 
@@ -366,6 +387,12 @@ function setup() {
     }
 
     window.addEventListener("keydown", (ev) => {
+        if (firstTime) {
+            soundtrackAudio.loop = true;
+            soundtrackAudio.play();
+            firstTime = false;
+        }
+
         let wasSpace = false;
 
         if (space) {
@@ -387,12 +414,11 @@ function setup() {
             if (moveRight || moveLeft) {
                 isFacingRight = moveRight;
 
-                if (!walkingSound) {
                     walkingSound = true;
                     walkingAudio.loop = false;
                     walkingAudio.currentTime = 0;
                     walkingAudio.play();
-                }
+
             }
         }
 
