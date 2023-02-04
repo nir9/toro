@@ -461,8 +461,12 @@ function setup() {
             this.frameCount = 0          
         }
 
+        private frameImg():Number{            
+            return 10
+        }
+
         public draw(ctx: any,screenX:number,screenY:number): void {
-            ctx.drawImage(<CanvasImageSource>document.getElementById("termite") ,screenX+this.x, this.y)         
+            ctx.drawImage(<CanvasImageSource>document.getElementById("termit-"+this.frameImg()) ,screenX+this.x, this.y)         
         }
 
         public UpdatePos(screenX:number,screenY:number): void{
@@ -506,7 +510,7 @@ function setup() {
         }
 
         public draw(ctx: any,screenX:number,screenY:number): void {
-            ctx.drawImage(<CanvasImageSource>document.getElementById("termite") ,this.x, this.y)         
+            ctx.drawImage(<CanvasImageSource>document.getElementById("termit-10") ,this.x, this.y)         
         }
 
         public UpdatePos(screenX:number,screenY:number): void{   
@@ -541,7 +545,7 @@ function setup() {
         }
 
         public draw(ctx: any,screenX:number,screenY:number): void {
-            ctx.drawImage(<CanvasImageSource>document.getElementById("termite") ,this.x, this.y)         
+            ctx.drawImage(<CanvasImageSource>document.getElementById("termit-10") ,this.x, this.y)         
         }
 
         public UpdatePos(screenX:number,screenY:number): void{
@@ -557,7 +561,7 @@ function setup() {
 
     let termites:Termite[] = []   
 
-    //spawnLine(5000/2,1600/2,1400/2,numTermite)
+    spawnLine(5000/2,1600/2,1400/2,numTermite)
     //spawnInCircle(5000/2,1600/2,100,numTermite)
     //spawnCircle(5000/2,1600/2,100,numTermite)
     //spawnRectangle(5000/2,1600/2,100,numTermite)
