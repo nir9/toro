@@ -131,11 +131,11 @@ function setupPlatforms(): GameObject[] {
     const plat1: GameObject = { x1: platX, y1: platY, x2: (platX + <number>platElm.width), y2: (platY + <number>platElm.height), elm: platElm };
 
     const plat2X = -50;
-    const plat2Y = 1900;
+    const plat2Y = 2000;
     const plat2: GameObject = { x1: plat2X, y1: plat2Y, x2: (plat2X + <number>platElm.width), y2: (plat2Y + <number>platElm.height), elm: platElm };
 
-    const plat3X = 400;
-    const plat3Y = 2300;
+    const plat3X = 600;
+    const plat3Y = 2500;
     const plat3: GameObject = { x1: plat3X, y1: plat3Y, x2: (plat3X + <number>platElm.width), y2: (plat3Y + <number>platElm.height), elm: platElm };
 
     const plat4X = 1000;
@@ -257,11 +257,11 @@ function setup() {
         ctx.drawImage(<CanvasImageSource>document.getElementById("edge-1"), 0 + x + 200 + 100 + 2200, 827 + y);
         ctx.drawImage(<CanvasImageSource>document.getElementById("west-curve-1"), 0 + x + 200 + 100 + 200, 1570 + y);
 
-        ctx.drawImage(<CanvasImageSource>document.getElementById("valley-1"), 0 + x + 400, 2450 + y);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("roof-1"), 0 + x + 400 , 1350 + 500 + y);
-        ctx.drawImage(<CanvasImageSource>document.getElementById("hill-1"), 0 + x + 400, 1650 + 600 + y);
-        
-        
+        ctx.drawImage(<CanvasImageSource>document.getElementById("valley-1"), 0 + x + 400 + 1800, 2400 + y);
+        // ctx.drawImage(<CanvasImageSource>document.getElementById("hill-1"), 0 + x,  y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("roof-1"), 0 + x + 1200 , 1350 + 500 + 100 + y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("hill-1"), 0 + x + 1200 , 1850 + 600 + y);
+       
         for (let i = 0; i < platforms.length; i++) {
             drawPlatform(ctx, platforms[i]);
         }
