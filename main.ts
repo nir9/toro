@@ -6,6 +6,9 @@ var particlesTimer = 0;
 var drawDoor = true;
 let playerBox: GameObject = {y1:0, x1:0, x2:0, y2:0}
 let xMove = 900;
+let walkingSound: boolean = false;
+var walkingAudio = new Audio("assets/music/walking.ogg");
+var attackingAudio = new Audio("assets/music/Attack.ogg");
 
 function getFirstBranchX() {
    return x + 2200 + 50;
@@ -344,6 +347,12 @@ function setup() {
 
             if (moveRight || moveLeft) {
                 isFacingRight = moveRight;
+
+                if (!walkingSound) {
+                    walkingSound = true;
+                    walkingAudio.loop = false;
+                    walkingAudio.play();
+                }
             }
         }
 
@@ -352,6 +361,10 @@ function setup() {
         }
 
         if (attack) {
+            attackingAudio.loop = false;
+            attackingAudio.currentTime = 0;
+            attackingAudio.play();
+
             attackCounter = 1;
 
             if (getFirstBranchX() - xMove > 20 && getFirstBranchX() - xMove < 200) {
@@ -363,10 +376,14 @@ function setup() {
     window.addEventListener("keyup", (ev) => {
         if (isWalkRightEvent(ev)) {
             moveRight = false;
+            walkingSound = false;
+            walkingAudio.pause();
         }
 
         if (isWalkLeftEvent(ev)) {
             moveLeft = false;
+            walkingSound = false;
+            walkingAudio.pause();
         }
 
         if (isFlyDownEvent(ev)) {
