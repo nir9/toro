@@ -14,7 +14,12 @@ function getFirstBranchX() {
    return x + 2200 + 50;
 }
 
+function getSecondBranchX() {
+    return x + 400 + 1850 + 700 + 1000;
+}
+
 let firstBranchRemainingLife = 3;
+let secondBranchRemainingLife = 3;
 
 interface Particle {
     x: number;
@@ -231,14 +236,13 @@ function setup() {
     }
 
     function update() {
-        
         if (ctx === null) {
             return;
         }
+
         ctx.fillStyle = "gray";
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-
 
         ctx.drawImage(<CanvasImageSource>document.getElementById("bg-1"), 0, 0);
         ctx.drawImage(<CanvasImageSource>document.getElementById("roots-back"), x / 10, y + 1000);
@@ -276,7 +280,10 @@ function setup() {
         ctx.drawImage(<CanvasImageSource>document.getElementById("valley-1"), 0 + x + 400 + 1850, 2390 + y);
         ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x + 400 + 1850 + 700, 2265 + y);
 
-        ctx.drawImage(<CanvasImageSource>document.getElementById("branch-1"), 0 + x + 400+ 1850 + 700 + 1000, 2000 + y);
+        if (secondBranchRemainingLife > 0) {
+            const animationDelta = secondBranchRemainingLife !== 3 ? Math.random() * 10 : 0;
+            ctx.drawImage(<CanvasImageSource>document.getElementById("branch-1"), getSecondBranchX(), 2000 + y + animationDelta);
+        }
 
         ctx.drawImage(<CanvasImageSource>document.getElementById("long-cube-1"), 0 + x + 400+ 1850 + 700 + 2500, 2400 + y);
         ctx.drawImage(<CanvasImageSource>document.getElementById("long-cube-1"), 0 + x + 400+ 1850 + 700 + 2500 + 300, 2400 + y);
@@ -316,6 +323,8 @@ function setup() {
 
         if (!isFacingRight) {
             ctx.scale(-1, 1);
+            xMove *= -1;
+            xMove -= 190;
         }
 
         if (debugMod){
@@ -370,6 +379,10 @@ function setup() {
             if (getFirstBranchX() - xMove > 20 && getFirstBranchX() - xMove < 200) {
                 firstBranchRemainingLife--;
             }
+
+            if (getSecondBranchX() - xMove > 20 && getSecondBranchX() - xMove < 200) {
+                secondBranchRemainingLife--;
+            }
         }
     });
 
@@ -395,10 +408,16 @@ function setup() {
         if (moveRight) {
             if (x < -1200 && firstBranchRemainingLife > 0) {
 
-            } else {
-                if (x > -2200) {
+            }
+
+            else if (x < -2850 && secondBranchRemainingLife > 0) {
+
+            }
+
+            else {
+                //if (x > -2200 && y > -800) {
                     x -= 20;
-                }
+                //}
             }
         }
 
