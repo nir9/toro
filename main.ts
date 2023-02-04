@@ -134,7 +134,11 @@ function setupPlatforms(): GameObject[] {
     const plat3Y = 2300;
     const plat3: GameObject = { x1: plat3X, y1: plat3Y, x2: (plat3X + <number>platElm.width), y2: (plat3Y + <number>platElm.height), elm: platElm };
 
-    return [plat1, plat2, plat3];
+    const plat4X = 1000;
+    const plat4Y = 3000;
+    const plat4: GameObject = { x1: plat4X, y1: plat4Y, x2: (plat4X + <number>platElm.width), y2: (plat4Y + <number>platElm.height), elm: platElm };
+
+    return [plat1, plat2, plat3, plat4];
 }
 
 
@@ -243,15 +247,17 @@ function setup() {
         drawBlock(ctx, x - 100, 500 + y + 300, 500); 
         drawBlock(ctx, x - 100, 500 + y + 400, 2700, 270); 
 
-
         // block in the end of the level
-        drawBlock(ctx, x + 3240,  y, 2700, 30000); 
+        drawBlock(ctx, x + 3240, y, 2700, 30000);
 
         ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x + 200 + 100, 580 + y);
         ctx.drawImage(<CanvasImageSource>document.getElementById("edge-1"), 0 + x + 200 + 100 + 2200, 827 + y);
         ctx.drawImage(<CanvasImageSource>document.getElementById("west-curve-1"), 0 + x + 200 + 100 + 200, 1570 + y);
 
         ctx.drawImage(<CanvasImageSource>document.getElementById("valley-1"), 0 + x + 400, 2450 + y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("roof-1"), 0 + x + 400 , 1350 + 500 + y);
+        ctx.drawImage(<CanvasImageSource>document.getElementById("hill-1"), 0 + x + 400, 1650 + 600 + y);
+        
         
         for (let i = 0; i < platforms.length; i++) {
             drawPlatform(ctx, platforms[i]);
@@ -375,6 +381,20 @@ function setup() {
                     y += 50;
                 } */
             }
+        }
+
+        flyDown = false;
+
+        if (x < -1550 && y > -550) {
+            flyDown = true;
+        }
+
+        if (x > -1400 && y < -550 && y > -750) {
+            flyDown = true;
+        }
+
+        if (x > 60 && y < -759 && y > -1850) {
+            flyDown = true;
         }
 
         if (flyDown) {
