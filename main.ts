@@ -156,8 +156,7 @@ function areObjectsColliding(ctx: any, obj1: GameObject, obj2: GameObject): bool
 }
 
 function setupPlatforms(): GameObject[] {
-    const platX = 100;
-    const platY = 1600;
+
     const platElm = <CanvasImageSource>document.getElementById("platform-1");
     const plat1: GameObject = { x1: platX, y1: platY, x2: (platX + <number>platElm.width), y2: (platY + <number>platElm.height), elm: platElm };
 
@@ -168,6 +167,7 @@ function setupPlatforms(): GameObject[] {
     const plat3X = 600;
     const plat3Y = 2500;
     const plat3: GameObject = { x1: plat3X, y1: plat3Y, x2: (plat3X + <number>platElm.width), y2: (plat3Y + <number>platElm.height), elm: platElm };
+
 
     const plat4X = 2200 + x + 400+ 1850 + 700 + 2500;
     const plat4Y = 2400 + y;
@@ -299,9 +299,11 @@ function setup() {
         // block in the end of the level
         drawBlock(ctx, x + 3240, y, 2700, 1500);
 
+
         ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x + 200 + 100, 580 + y);
         ctx.drawImage(<CanvasImageSource>document.getElementById("edge-1"), 0 + x + 200 + 100 + 2200, 827 + y);
         ctx.drawImage(<CanvasImageSource>document.getElementById("west-curve-1"), 0 + x + 200 + 100 + 200, 1570 + y);
+
 
         ctx.drawImage(<CanvasImageSource>document.getElementById("roof-1"), 0 + x + 1200 , 1350 + 500 + 100 + y);
         ctx.drawImage(<CanvasImageSource>document.getElementById("hill-1"), 0 + x + 1200 , 1850 + 600 + y);
@@ -464,6 +466,7 @@ function setup() {
 
         if (x < -1550 && y > -550) {
             flyDown = true;
+
         }
 
         if (x > -1400 && y < -550 && y > -750) {
