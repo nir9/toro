@@ -43,14 +43,18 @@ function drawPlatform(ctx: CanvasRenderingContext2D, platform: GameObject, clear
     }
 
     if (areObjectsColliding(platform, playerBox)) {
+        
         if (clearAfterCollision) {
+            
             platform.shouldNotDraw = true;
         } else {
+            console.log("b "+platform.x1)            
             playerY = platform.y1-150;
         }
     } else {
         if (!clearAfterCollision) {
-            playerY = defaultPlayerY;
+            //console.log("a"+platform.x1)
+            //playerY = defaultPlayerY;
         }
     }
 
@@ -212,7 +216,7 @@ function setup() {
         ctx.drawImage(<CanvasImageSource>document.getElementById("ground"), 0 + x, 100 + y);
         
         for (let i = 0; i < platforms.length; i++) {
-            drawPlatform(ctx, platforms[i], i === 0);
+            drawPlatform(ctx, platforms[i], false);//don't clear after colision
         }
 
         // ctx.drawImage(<CanvasImageSource>document.getElementById("small-cube-1"), 500 + x, 450 );
@@ -318,9 +322,7 @@ function setup() {
 
             if(!isColide){
                 x -= 20;
-                if (x < -1800) {
-                    y -= 100;
-                }
+
             }                     
         }
 
@@ -561,7 +563,7 @@ function setup() {
 
     let termites:Termite[] = []   
 
-    spawnLine(5000/2,1600/2,1400/2,numTermite)
+    //spawnLine(5000/2,1600/2,1400/2,numTermite)
     //spawnInCircle(5000/2,1600/2,100,numTermite)
     //spawnCircle(5000/2,1600/2,100,numTermite)
     //spawnRectangle(5000/2,1600/2,100,numTermite)
@@ -757,7 +759,8 @@ function setup() {
         const doorTop = 250
         const doorBottom = (doorTop + <number>doorElm.height);
 
-        return[new Door(doorLeft,doorRight,doorTop,doorBottom),/*doorTriger*/]
+        //return[new Door(doorLeft,doorRight,doorTop,doorBottom),/*doorTriger*/]
+        return []
     }
 
     let mapObjects = setupMapObject()
