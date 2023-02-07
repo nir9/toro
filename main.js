@@ -155,7 +155,7 @@ function setup() {
     let flyUp = false;
     let attack = false;
     let doubleJump = false;
-    let debugMod = true;
+    let debugMod = false;
     if (ctx === null) {
         return;
     }
