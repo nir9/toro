@@ -116,11 +116,11 @@ interface GameObject {
 }
 
 function strokeStuff(ctx: any, obj1: any, obj2: any, ok: boolean) {
-    const saved = ctx.strokeStyle;
+    /*const saved = ctx.strokeStyle;
     ctx.strokeStyle = ok ? "green" : "red";
     ctx.strokeRect(obj1.x1, obj1.y1, obj1.x2 - obj1.x1, obj1.y2 - obj1.y1)
     ctx.strokeRect(obj2.x1, obj2.y1, obj2.x2 - obj2.x1, obj2.y2 - obj2.y1)
-    ctx.strokeStyle = saved;
+    ctx.strokeStyle = saved;*/
 }
 
 function areObjectsColliding(ctx: any, obj1: GameObject, obj2: GameObject): boolean {
@@ -203,7 +203,7 @@ function setup() {
     let flyUp = false;
     let attack = false;
     let doubleJump = false;
-    let debugMod = true;
+    let debugMod = false;
 
     if (ctx === null) {
         return;
@@ -506,7 +506,9 @@ function setup() {
         termiteUpdatePos(x,y)
 
         update();
-        requestAnimationFrame(updatePos);
+        setTimeout(()=>{
+            requestAnimationFrame(updatePos);
+        }, 30);
     }
 
     requestAnimationFrame(updatePos);
@@ -706,7 +708,7 @@ function setup() {
 
     let termites:Termite[] = []   
 
-    spawnLine(5000/2,1600/2,1400/2,numTermite)
+    //spawnLine(5000/2,1600/2,1400/2,numTermite)
 
     function spawnLine(x:any,top:any,borrom:any,many:any){
         let count = 0
