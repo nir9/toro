@@ -1,0 +1,146 @@
+<html>
+    <head>
+        <style>
+            #game-over {
+                z-index: 10000;
+                position: fixed;
+                top: 250px;
+                left: 500px;
+                padding: 100px;
+                font-size: 70px;
+                font-family: Arial;
+                display: none;
+                background-color: white;
+            }
+            body {
+                margin: 0;
+                padding: 0;
+                background-color: gray;
+                overflow: hidden;
+            }
+            canvas {
+                width: 1280px;
+                height: 720px;
+                padding: 50px;
+            }
+            /*.mainMenu{
+                position: fixed;
+                left: 400px;
+                top: 200px;
+                width: 800px;
+                height: 550px;
+                background-color: rgba(128, 128, 128, 0.452);
+            }
+            .logo{
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .play_btn{
+                width: 90%;
+                margin-left: 5%;
+                color: white;
+                font-size: xxx-large;
+                text-align: center;
+                background: rgba(169, 169, 169, 0.37);
+             }
+             .play_btn:hover{
+                background-color: lightgray;
+            }
+
+            .authors{
+                color: white;
+                background-color: rgba(169, 169, 169, 0.438);
+                font-size: medium;
+                margin-left: 5%;
+                width: fit-content;
+            }*/
+    
+        </style>           
+    </head>
+    <body>
+       
+        <img style="display: none;" src="assets/attack/Root-Character-Attack-1.png" id="attack1">
+        <img style="display: none;" src="assets/attack/Root-Character-Attack-2.png" id="attack2">
+        <img style="display: none;" src="assets/attack/Root-Character-Attack-3.png" id="attack3">
+        <img style="display: none;" src="assets/attack/Root-Character-Attack-4.png" id="attack4">
+        <img style="display: none;" src="assets/attack/Root-Character-Attack-5.png" id="attack5">
+        <img style="display: none;" src="assets/attack/Root-Character-Attack-6.png" id="attack6">
+        <img style="display: none;" src="assets/attack/Root-Character-Attack-7.png" id="attack7">
+        <img style="display: none;" src="assets/attack/Root-Character-Attack-8.png" id="attack8">
+        <img style="display: none;" src="assets/attack/Root-Character-Attack-9.png" id="attack9">
+        <img style="display: none;" src="assets/attack/Root-Character-Attack-10.png" id="attack10">
+        <img style="display: none;" src="assets/end/Toro-Sitting-Down-End-Scene-1.png" id="endtoro1">
+        <img style="display: none;" src="assets/end/Toro-Sitting-Down-End-Scene-2.png" id="endtoro2">
+        <img style="display: none;" src="assets/end/Toro-Sitting-Down-End-Scene-3.png" id="endtoro3">
+        <img style="display: none;" src="assets/end/Toro-Sitting-Down-End-Scene-4.png" id="endtoro4">
+        <img style="display: none;" src="assets/end/Toro-Sitting-Down-End-Scene-5.png" id="endtoro5">
+        <img style="display: none;" src="assets/end/Toro-Sitting-Down-End-Scene-6.png" id="endtoro6">
+        <img style="display: none;" src="assets/end/Toro-Sitting-Down-End-Scene-7.png" id="endtoro7">
+        <img style="display: none;" src="assets/end/Toro-Sitting-Down-End-Scene-8.png" id="endtoro8">
+        <img style="display: none;" src="assets/end/Toro-Sitting-Down-End-Scene-9.png" id="endtoro9">
+        <img style="display: none;" src="assets/end/Toro-Sitting-Down-End-Scene-10.png" id="endtoro10">
+        <img style="display: none;" src="assets/end/bg-ending.png" id="bgending">
+        <img style="display: none;" src="assets/Root-Character-Running-1.png" id="running1">
+        <img style="display: none;" src="assets/Root-Character-Running-2.png" id="running2">
+        <img style="display: none;" src="assets/Root-Character-Running-3.png" id="running3">
+        <img style="display: none;" src="assets/Root-Character-Running-4.png" id="running4">
+        <img style="display: none;" src="assets/Root-Character-Running-5.png" id="running5">
+        <img style="display: none;" src="assets/Root-Character-Running-6.png" id="running6">
+        <img style="display: none;" src="assets/Root-Character-Running-7.png" id="running7">
+        <img style="display: none;" src="assets/Root-Character-Running-8.png" id="running8">
+        <img style="display: none;" src="assets/Root-Character-Jumping--1.png" id="jumping1">
+        <img style="display: none;" src="assets/Root-Character-Jumping--2.png" id="jumping2">
+        <img style="display: none;" src="assets/Root-Character-Jumping--3.png" id="jumping3">
+        <img style="display: none;" src="assets/Root-Character-Jumping--4.png" id="jumping4">
+        <img style="display: none;" src="assets/Root-Character-Jumping--5.png" id="jumping5">
+        <img style="display: none;" src="assets/Root-Character-Jumping--6.png" id="jumping6">
+        <img style="display: none;" src="assets/Root-Character-Jumping--7.png" id="jumping7">
+        <img style="display: none;" src="assets/Root-Character-Jumping--8.png" id="jumping8">
+        <img style="display: none;" src="assets/Root-Character-Jumping--9.png" id="jumping9">
+        <img style="display: none;" src="assets/Root-Character-Jumping--10.png" id="jumping10">
+        <img style="display: none;" src="assets/Root-Character-Standing--1.png" id="standing1">
+        <img style="display: none;" src="assets/Root-Character-Standing--2.png" id="standing2">
+        <img style="display: none;" src="assets/Root-Character-Standing--3.png" id="standing3">
+        <img style="display: none;" src="assets/Root-Character-Standing--4.png" id="standing4">
+        <img style="display: none;" src="assets/Ground-Short.png" id="ground">
+        <img style="display: none;" src="assets/Ground-Super-Short.png" id="ground-short">
+        <img style="display: none;" src="assets/termite.png" id="termite">
+        <img style="display: none;" src="assets/Above-Back.png" id="above-back">
+        <img style="display: none;" src="assets/Above-Front.png" id="above-front">
+        <img style="display: none;" src="assets/Back-Ground-1.png" id="bg-1">
+        <img style="display: none;" src="assets/Roots-Front.png" id="roots-front">
+        <img style="display: none;" src="assets/Roots-Back.png" id="roots-back">
+        <img style="display: none;" src="assets/Root-Character-Death.png" id="death">       
+        <img style="display: none;" src="assets/Small-Cube-1.png" id="platform-1">
+        <img style="display: none;" src="assets/Small-Cube-1.png" id="small-cube-1">
+        <img style="display: none;" src="assets/Medium-Cube-1.png" id="medium-cube-1">
+        <img style="display: none;" src="assets/Door-1.png" id="door-1">
+        <img style="display: none;" src="assets/NorthEast-Curve.png" id="ne-curve-1">
+        <img style="display: none;" src="assets/WestEast-S-Curve.png" id="we-s-curve-1">
+        <img style="display: none;" src="assets/West-Curve-1.png" id="west-curve-1">
+        <img style="display: none;" src="assets/SouthWest-Curve-1.png" id="sw-curve-1">
+        <img style="display: none;" src="assets/Little-Tel.png" id="little-tel">
+        <img style="display: none;" src="assets/Edge-1.png" id="edge-1">
+        <img style="display: none;" src="assets/Branch-1.png" id="branch-1">
+        <img style="display: none;" src="assets/FlippedCube.png" id="flipped-cube">
+        <img style="display: none;" src="assets/Valley-1.png" id="valley-1">
+        <img style="display: none;" src="assets/HillOne.png" id="hill-1">
+        <img style="display: none;" src="assets/Roof-With-Curve.png" id="roof-1">
+
+        <img style="display: none;" src="assets/Untitled-Artwork-10.png" id="termit-10">
+        <img style="display: none;" src="assets/Long-Cube-1.png" id="long-cube-1">
+        <img style="display: none;" src="assets/big-cube.png" id="big-cube-1">
+
+
+
+        <canvas id="game" width="500" height="500"></canvas>
+        <div id="game-over">
+            <h1 style="color: red; font-size: 72px;">
+                Toro has died :(
+            </h1>
+        </div>
+        <script src="game.js"></script>
+       
+    </body>
+</html>

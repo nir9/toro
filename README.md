@@ -1,6 +1,9 @@
 # Toro
 Toro game for Global Game Jam
 
+# Play
+https://nir9.github.io/toro/
+
 # Team Members
 
 - Arielle Lichtman - Game Artist
@@ -14,3 +17,6 @@ Music and sound effects:
 - Vitaliy Filurin
 - Dima chif kif
 
+
+# compiler instructions
+install npx and run `npx tsc --watch`
